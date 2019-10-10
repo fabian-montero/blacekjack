@@ -1,0 +1,31 @@
+abrir GUI
+pedir nombre de jugadores
+repartir 1 carta a cada jugador
+se reparte 1 carta oculta al dealer
+se reparte 1 carta más a cada jugador
+	si algún jugador obtiene un black jack, gana automaticamente
+se reparte 1 carta visible al dealer
+para cada jugador X:
+	se le pregunta a X si quiere:
+		|
+		| pedir una carta más
+		|	se le da una carta más
+		|	si se pasa de 21, pierde
+		|
+		| plantarse
+
+el dealer muestra la carta oculta
+si el dealer:
+	|
+	| tiene menos de 16
+	|	pide una carta más
+	|	si se pasa de 21, pierde
+	|
+	| si tiene más de 17
+		se planta
+
+se repite el paso anterior hasta que el dealer se plante
+decidir quien ganó
+actualiza la tabla de puntuaciones
+se limpia el espacio de juego
+se regresa al inicio
