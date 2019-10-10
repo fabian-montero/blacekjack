@@ -1,0 +1,15 @@
+(send)
+	recibe: cosas
+	retorna:
+	descripción: es la funcion que muestra la gui
+
+(iniciar)
+	recibe: elementos de la gui
+	retoran: una llamada a (bCEj (lista de jugadores))
+	descripción: obtiene los nombre de la gui y llama a la función principal con esos nombres de arugmento
+	
+(bCEj X)
+	recibe: una lista con los nombres de cada jugador de la partida
+	retorna: 
+	descripción: reparte cartas, determina quien gana, determina quien pierde, actualiza la tabla de puntuación
+
