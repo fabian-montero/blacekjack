@@ -10,11 +10,6 @@ lista: players
 	retorna: 
 	descripción: inicia la gui
 
-(jack arg_list deck)
-	recibe: una lista de argumentos. el primer argumento decide a cual función auxiliar llamar
-	retorna: una llamada a una función auxiliar
-	descripción: es una función que llama la GUI para hacer todo
-
 (deal name players deck)
 	recibe: el nombre del jugador al que se le va a reparitr
 	retorna: players actualizada
@@ -50,5 +45,15 @@ lista: players
 	retorna: lista de players actualizada
 	descripción: le aplica stay al status del jugador que se le pasó como argumento
 
-(check_stay players)
-	recibe: 
+(all_players_stayed? players)
+	recibe: la lista players
+	retorna: verdadero si todos los jugadores excepto el dealer están plantados, falso si no
+	descripción: siempre que alguien se planta, revisa si todos los jugadores excepto el dealer estan plantados
+
+(check_dealer players)
+	recibe: la lista players
+	retorna: una llamada a endgame
+	descripción: si el dealer tiene menos o igual a 16, pide cartas. si tiene mas de 16, se planta. se llama endgame.
+
+
+
