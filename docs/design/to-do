@@ -1,8 +1,9 @@
-hacer funciones de get de todos los datos de cualquier jugador
+hacer funciones de get de todos los datos de cualquier jugador (done, funciones/get_player)
 
 hacer blackjack sort
 
-hacer randomizer de cartas
+hacer randomizer de cartas (done, funciones/mix_list, funciones/pick-item, funciones/pick-random)
+    ADVERTENCIA: Funnción 'mix_list' utiliza let, debe incluirse en el módulo GUI.
 
 hacer deck
 
