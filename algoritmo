@@ -1,12 +1,12 @@
-abrir GUI
-pedir nombre de jugadores
+abrir gui
 repartir 1 carta a cada jugador
 se reparte 1 carta oculta al dealer
 se reparte 1 carta más a cada jugador
-	si algún jugador obtiene un black jack, gana automaticamente
+	| si algún jugador obtiene un black jack, gana automaticamente
+
 se reparte 1 carta visible al dealer
 para cada jugador X:
-	se le pregunta a X si quiere:
+	| se le pregunta a X si quiere:
 		|
 		| pedir una carta más
 		|	se le da una carta más

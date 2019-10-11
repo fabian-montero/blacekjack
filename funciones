@@ -1,15 +1,54 @@
-(send)
-	recibe: cosas
-	retorna:
-	descripción: es la funcion que muestra la gui
+; estructuras de datos
+lista: deck
+lista: players
+	| nombre, status, cartas
 
-(iniciar)
-	recibe: elementos de la gui
-	retoran: una llamada a (bCEj (lista de jugadores))
-	descripción: obtiene los nombre de la gui y llama a la función principal con esos nombres de arugmento
-	
-(bCEj X)
+
+; funciones
+(bCEj name_list)
 	recibe: una lista con los nombres de cada jugador de la partida
 	retorna: 
-	descripción: reparte cartas, determina quien gana, determina quien pierde, actualiza la tabla de puntuación
+	descripción: inicia la gui
 
+(jack arg_list deck)
+	recibe: una lista de argumentos. el primer argumento decide a cual función auxiliar llamar
+	retorna: una llamada a una función auxiliar
+	descripción: es una función que llama la GUI para hacer todo
+
+(deal name players deck)
+	recibe: el nombre del jugador al que se le va a reparitr
+	retorna: players actualizada
+	descripción: retorna la la lista players actualizada, es decir, con una carta más al jugador que se puso en el argumento
+
+(init name_list deck)
+	recibe: lista de nombres de jugadores
+	retorna: lista players
+	descripción: construye la lista players y llama la función para hacer la primera repartida
+
+(deal_init name_list players deck)
+	recibe: la lista players
+	retorna: lista players actualizada
+	descripción: hace recursion de cola con la lista de nombres para construir la lista players 
+	
+(blackjack? players)
+	recibe: la lista players
+	retorna: verdadero si alguien tiene blackjack o falso si no
+	descripción: despues de hacer un deal, se ejecuta esta función para ver si alguien obtuvo blackjack
+
+(bust? players)
+	recibe: lista players
+	retorna: verdadero si alguien tiene un bust o falso si no
+	descripción: despues de hacer un deal, se ejecuta esta función para ver si alguien obtuvo un bust
+
+(endgame players)
+	recibe: la lista players
+	retorna: lista de pares (jugador puntaje) y lista de nombres de los ganadores
+	descripción: suma los puntos de cada jugador y genera la lista de jugador puntaje, ordena la lista de jugadores por puntaje en orden blackjack, añade a otra lista (lista de nombres de ganadores) el nombre del jugador que esté arriba de la lista, revisa si el siguiente jugador tiene una puntuación igual a la del primer lugar, si sí, lo añade también y sigue asi para siempre, si no, para de llenar la lista de ganadores.
+
+(stay name players)
+	recibe: el nombre de un jugador y la lista players
+	retorna: lista de players actualizada
+	descripción: le aplica stay al status del jugador que se le pasó como argumento
+
+(check_stay players)
+	recibe: 
