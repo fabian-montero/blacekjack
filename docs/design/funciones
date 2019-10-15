@@ -1,10 +1,95 @@
 ; estructuras de datos
 lista: deck
+    | nombre, bitmap%, valor, init_X, init_Y
 lista: players
-	| nombre, status, cartas
+	| nombre, status, cartas, elementos_gráficos(canvas, hit, stay)
+	
+<---------------------------------Variables globales--------------------------------------------------->
+frame_main : frame%
+    Desc: Ventana principal del juego.
+    
+pane_main : vertical-pane%
+    Desc: Contiene el panel del dealer y el panel de los jugadores.
+    
+pane_dealer: horizontal-pane%
+    Desc: Contiene el canvas de las cartas del dealer y el canvas para el deck.
+    
+canvas_dealer_cards : canvas%
+    Desc: Contiene las cartas del dealer.
+    
+canvas_deck : canvas%
+    Desc: Contiene una imágen que simula un deck.
+    
+pane_players : horizontal-pane%
+    Desc: Contiene una panel con sus componentes respectivos para cada jugador
+    
+list_players : list (nombre, status('stay, 'playing, 'turn), cartas, elementos_gráficos(canvas, hit, stay))
+    Desc: Contiene a los jugadores y sus cartas respectivas.
+    
+list_deck : list (nombre, bitmap%, valor, init_X, init_Y)
+    Desc: Contiene las cartas que se usarán durante la partida.
+    
+dialog_puntuation_table : dialog%
+    Desc: Muestra las puntuaciones de los jugadores al finalizar una partida, también permite reiniciar el juego.
+
+<---------------------------------GUI--------------------------------------------------->
+(create_players names)
+    recibe: Nombres de jugadores
+    Retorna: N/A
+    Desc: Construye los canvas y páneles necesarios para los jugadores, luego los añade al pane_players, además añade a la list_players los objetos de los botones hit y stay.
+
+(hit_event button_event)
+    recibe: Evento del botón hit de un jugador.
+    retorna: N/A
+    Desc: Ejecuta la función engine/deal y draw_player_cards, esta función se debe definir dentro del parámetro callback del botón hit correspondiente a cada jugador.
+
+(stay_event button_event)
+    recibe: Evento del botón stay de un jugador.
+    retorna: N/A
+    Desc: Ejecuta la función engine/stay, esta función se debe definir dentro del parámetro callback del botón stay correspondiente a cada jugador.
+
+(draw_player_cards draw_context cards)
+    recibe: Objeto dc% (draw_context) para dibujar las cartas del jugador respectivo (cards)
+    retorna: N/A
+    Desc: Dibuja las cartas y las dibuja para que se vean solapadas,debe definirse dentro del parámetro callback de los botones de cada jugador (stay, hit).
+
+(draw_dealer_cards draw_context cards)
+    recibe: Objeto dc% (draw_context) para dibujar las cartas del dealer (cards)
+    retorna: N/A
+    Desc: Dibuja las cartas una al lado de otra, debe llamarse al momento de que al dealer se le otorgan las cartas que requiere y al inicio cuando se le dan las primeras dos cartas.
+
+(draw_deck draw_context)
+    recibe: Objeto dc% (draw_context) para dibujar el deck.
+    retorna: N/A
+    Desc: Dibuja el deck, aunque dependiendo de lo que se coloque de background puede ser innecesario un espacio para el deck.
+
+(reset_game)
+    recibe: N/A
+    retorna: N/A
+    Desc: reinicia los canvas de todos los jugadores y vuelve a repartir las cartas.
+
+(puntuation_table)
+    recibe: N/A
+    retorna: N/A
+    Desc: Finaliza la partida y muestra una ventana con las puntuaciones de los jugadores.
+
+(check_player_buttons players)
+    recibe: lista de jugadores
+    retorna: N/A
+    Desc: Revisa a los jugadores que están en status playing y activa los botones del que tiene el status turn.
+
+(turn name players)
+    recibe: lista de jugadores
+    retorna: lista de jugadores actualizda.
+    Desc: activa el status turn para el jugador indicado.
+
+(pass_turn players)
+    recibe: lista de jugadores
+    retorna: lista de jugadores actualizda.
+    Desc: activa el status turn para el siguiente jugador en status playing.
 
 
-; funciones
+<---------------------------------ENGINE--------------------------------------------------->
 (bCEj name_list)
 	recibe: una lista con los nombres de cada jugador de la partida
 	retorna: 
@@ -12,7 +97,7 @@ lista: players
 
 (deal name players deck)
 	recibe: el nombre del jugador al que se le va a reparitr
-	retorna: players actualizada
+	retorna: players actualizadahttps://www.lucidchart.com/documents#docs?folder_id=home&browser=icon&sort=saved-desc
 	descripción: retorna la la lista players actualizada, es decir, con una carta más al jugador que se puso en el argumento
 
 (init name_list deck)
@@ -43,7 +128,7 @@ lista: players
 (stay name players)
 	recibe: el nombre de un jugador y la lista players
 	retorna: lista de players actualizada
-	descripción: le aplica stay al status del jugador que se le pasó como argumento
+	descripción: le aplica stay al status del jugador que se le pasó como argumento.
 
 (all_players_stayed? players)
 	recibe: la lista players
@@ -59,7 +144,7 @@ lista: players
     recibe: la lista players
     retorna: la lista con los datos del jugador
     descripción: busca el jugador según el parámetro name y retorna su lista de atributos correspondiente.
-    
+
 INFO: podría ser que 'pick-random' haga que todo lo de el deck random tenga que ir a la GUI, para evitar shit del profe, pero es súmamente eficiente ya que es O(1), en cambio, 'pick-item' es, aproximandamente, O(n^2). En cualquier caso, 'mix_list' usa let y no encontré una forma para que no fuera así.
     
     
