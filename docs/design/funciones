@@ -55,5 +55,32 @@ lista: players
 	retorna: una llamada a endgame
 	descripción: si el dealer tiene menos o igual a 16, pide cartas. si tiene mas de 16, se planta. se llama endgame.
 
+(get_player name players)
+    recibe: la lista players
+    retorna: la lista con los datos del jugador
+    descripción: busca el jugador según el parámetro name y retorna su lista de atributos correspondiente.
+    
+INFO: podría ser que 'pick-random' haga que todo lo de el deck random tenga que ir a la GUI, para evitar shit del profe, pero es súmamente eficiente ya que es O(1), en cambio, 'pick-item' es, aproximandamente, O(n^2). En cualquier caso, 'mix_list' usa let y no encontré una forma para que no fuera así.
+    
+    
+(define (pick-item l)
+  (list-ref l (random (length l))))
+  
+(define (pick-random xs)
+  (pick-random/helper (rest xs) (first xs) 1))
 
+(define (pick-random/helper xs chosen k)
+  (cond
+    [(empty? xs) chosen]
+    [else  ; with probability 1/(k+1) choose the first element of xs
+     (if (= (random (+ k 1)) 0)
+         (pick-random/helper (rest xs) (first xs) (+ k 1))
+         (pick-random/helper (rest xs) chosen     (+ k 1)))]))
 
+(define (mix_list lista)
+  (cond ((empty? lista)
+         (list))
+        (else
+         (let ([card (pick-random lista)])
+           (append (list card)
+                   (mix_list (remove card lista)))))))
