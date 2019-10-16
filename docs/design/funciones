@@ -1,34 +1,28 @@
-; estructuras de datos
-lista: deck
-    | nombre, bitmap%, valor, init_X, init_Y
-lista: players
-	| nombre, status, cartas, elementos_gráficos(canvas, hit, stay)
-	
 <---------------------------------Variables globales--------------------------------------------------->
 frame_main : frame%
     Desc: Ventana principal del juego.
-    
+
 pane_main : vertical-pane%
     Desc: Contiene el panel del dealer y el panel de los jugadores.
-    
+
 pane_dealer: horizontal-pane%
     Desc: Contiene el canvas de las cartas del dealer y el canvas para el deck.
-    
+
 canvas_dealer_cards : canvas%
     Desc: Contiene las cartas del dealer.
-    
+
 canvas_deck : canvas%
     Desc: Contiene una imágen que simula un deck.
-    
+
 pane_players : horizontal-pane%
     Desc: Contiene una panel con sus componentes respectivos para cada jugador
-    
+
 list_players : list (nombre, status('stay, 'playing, 'turn), cartas, elementos_gráficos(canvas, hit, stay))
     Desc: Contiene a los jugadores y sus cartas respectivas.
-    
+
 list_deck : list (nombre, bitmap%, valor, init_X, init_Y)
     Desc: Contiene las cartas que se usarán durante la partida.
-    
+
 dialog_puntuation_table : dialog%
     Desc: Muestra las puntuaciones de los jugadores al finalizar una partida, también permite reiniciar el juego.
 
@@ -92,7 +86,7 @@ dialog_puntuation_table : dialog%
 <---------------------------------ENGINE--------------------------------------------------->
 (bCEj name_list)
 	recibe: una lista con los nombres de cada jugador de la partida
-	retorna: 
+	retorna:
 	descripción: inicia la gui
 
 (deal name players deck)
@@ -108,8 +102,8 @@ dialog_puntuation_table : dialog%
 (deal_init name_list players deck)
 	recibe: la lista players
 	retorna: lista players actualizada
-	descripción: hace recursion de cola con la lista de nombres para construir la lista players 
-	
+	descripción: hace recursion de cola con la lista de nombres para construir la lista players
+
 (blackjack? players)
 	recibe: la lista players
 	retorna: verdadero si alguien tiene blackjack o falso si no
@@ -146,11 +140,11 @@ dialog_puntuation_table : dialog%
     descripción: busca el jugador según el parámetro name y retorna su lista de atributos correspondiente.
 
 INFO: podría ser que 'pick-random' haga que todo lo de el deck random tenga que ir a la GUI, para evitar shit del profe, pero es súmamente eficiente ya que es O(1), en cambio, 'pick-item' es, aproximandamente, O(n^2). En cualquier caso, 'mix_list' usa let y no encontré una forma para que no fuera así.
-    
-    
+
+
 (define (pick-item l)
   (list-ref l (random (length l))))
-  
+
 (define (pick-random xs)
   (pick-random/helper (rest xs) (first xs) 1))
 

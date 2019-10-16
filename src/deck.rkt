@@ -1,3 +1,5 @@
+; (provide get_deck)
+
 (define (get_deck)
   '(
     ("ace_clubs_1" 1 0 0) ("ace_clubs_11" 11 0 0) ("two_clubs" 2 0 0) ("three_clubs" 3 0 0)
