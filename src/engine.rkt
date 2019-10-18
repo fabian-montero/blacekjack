@@ -4,10 +4,10 @@
 ; lista players de ejemplo para debugging
 (define (get_players_example)
   '(
-      ("dealer" "stay" (("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
+      ("dealer" "stay" (("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 1 0 0)) ())
       ("fabian" "stay" (("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
       ("dealer" "stay" (("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
-      ("dealer" "stay" (("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
+      ("Pablo" "stay" (("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
       ("dealer" "stay" (("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
    )
 )
@@ -90,6 +90,8 @@
 
 
 ; Construye la lista players al inicio de la partida
+; con el nombre, el status de playing, lista de cartas
+; vacía y lista de elementos gráficos vacía.
 ;
 ; Parámetros:
 ;   lista_de_nombres: Lista con los nombres de los jugadores
@@ -97,7 +99,7 @@
 ;   players: Lista vacía que se va a propagar
 ;
 ; Retorna:
-;   Lista players lista para usarse
+;   Lista players lista para usarse.
 ;
 (define (deal_init lista_de_nombres players)
   (cond
@@ -127,6 +129,7 @@
 ;
 ; Retorna:
 ;   Valor numérico de la mano de un jugador
+;   de tipo integer.
 ;
 (define (hand_total hand)
   (cond
@@ -186,6 +189,7 @@
 ;   name: Nombre del jugador buscado
 ;   players: lista de jugadores
 ;   deck: lista de cartas disponibles
+;
 ; Retorna:
 ;   La lista players pero el jugador con nombre igual a name
 ;   adqduiere una carta más del deck.
@@ -194,10 +198,7 @@
   (cond ((empty? players)
          (list))
         ((equal? name (caar players))
-         (cons (cons name
-                     (list (append (cadar players)
-                                   (list (car deck)))))
-               (deal name (cdr players) deck)))
+         (cons ))
         (else
          (cons (car players)
                  (deal name (cdr players) deck))))
@@ -208,6 +209,7 @@
 ;
 ; Parámetros:
 ;   players: lista de jugadores
+;
 ; Retorna:
 ;   Verdadero si alguien lo obtuvo o falso si nadie lo consigue.
 ;
@@ -222,13 +224,14 @@
           (blackjack? (cdr players)))))
 
 
-; Genera tabla de puntuaciones.
+; Genera tabla de puntuaciones usando listas
+; de la forma: ((jugador puntaje) (jugador puntaje) ...).
 ;
 ; Parámetros:
 ;   players: lista de jugadores
+;
 ; Retorna:
-;   Lista de lista con jugadores y puntajes.
-;   ((jugador puntaje) (jugador puntaje) ...)
+;   Lista de listas con jugadores y puntajes.
 ;
 (define (endgame players)
   (cond ((empty? players)
@@ -241,18 +244,22 @@
 
 
 ; Le aplica el status stay a un jugador determinado.
+; si existe más de un jugador con el mismo nombre el status
+; se le aplicará la primera ocurrencia.
 ;
 ; Parámetros:
 ;   players: lista de jugadores
 ;   name: Jugador objetivo.
+;
 ; Retorna:
 ;   Lista de jugadores con el jugador pasado en status stay,
-;   si existe más de un jugador con el mismo nombre el status
-;   se le aplicará la primera ocurrencia.
+;   si no se encuentra el jugador se retorna lista players intacta.
 ;
 (define (stay name players)
-  (cond ((equal? name (caar players))
-         (cons (cons (caar players)
+  (cond((empty? players)
+         (list))
+       ((equal? name (caar players))
+        (cons (cons (caar players)
                (cons 'stay
                      (cons (caddar players)
                            (cons (cadr (cddar players))
