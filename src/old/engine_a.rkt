@@ -1,5 +1,6 @@
 #lang racket
-;
+
+
 ; Agrega una carta a las cartas de un jugador determinado.
 ;
 ; Parámetros:
@@ -31,7 +32,7 @@
   )
 )
 
-;
+
 ; Revisa si algún jugador de la lista ha obtenido un blackjack
 ;
 ; Parámetros:

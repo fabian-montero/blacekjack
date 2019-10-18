@@ -17,7 +17,7 @@ canvas_deck : canvas%
 pane_players : horizontal-pane%
     Desc: Contiene una panel con sus componentes respectivos para cada jugador
 
-list_players : list (nombre, status('stay, 'playing, 'turn), cartas, elementos_gráficos(canvas, hit, stay))
+list_players : list (nombre, status('stay, 'playing, 'turn'), cartas, elementos_gráficos(canvas, hit, stay))
     Desc: Contiene a los jugadores y sus cartas respectivas.
 
 list_deck : list (nombre, bitmap%, valor, init_X, init_Y)
@@ -91,7 +91,7 @@ dialog_puntuation_table : dialog%
 
 (deal name players deck)
 	recibe: el nombre del jugador al que se le va a reparitr
-	retorna: players actualizadahttps://www.lucidchart.com/documents#docs?folder_id=home&browser=icon&sort=saved-desc
+	retorna: players actualizada https://www.lucidchart.com/documents#docs?folder_id=home&browser=icon&sort=saved-desc
 	descripción: retorna la la lista players actualizada, es decir, con una carta más al jugador que se puso en el argumento
 
 (init name_list deck)
