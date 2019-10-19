@@ -1,6 +1,3 @@
-#lang racket
-
-
 ; lista players de ejemplo para debugging
 (define (get_players_example)
   '(
