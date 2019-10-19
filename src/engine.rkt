@@ -198,7 +198,12 @@
   (cond ((empty? players)
          (list))
         ((equal? name (caar players))
-         (cons ))
+         (cons (cons (caar players)
+               (cons (cadar players)
+                     (cons (append (caddar players) (list (car deck)))
+                           (cons (cadr (cddar players))
+                                 (list)))))
+               (cdr players)))
         (else
          (cons (car players)
                  (deal name (cdr players) deck))))
