@@ -20,8 +20,9 @@
 
                          ))
 
-(define pane_players (new horizontal-pane%
+(define pane_players (new horizontal-panel%
                          [parent frame_main]
+                         [style '(auto-hscroll)]
                          ))
 
 (define bitmap2 (let ([x (send (make-object bitmap% 1000 1000) make-dc)]
@@ -68,8 +69,6 @@
                                  ))
 
 (send canvas_dealer_cards init-auto-scrollbars 3000 1 0 0)
-
-
 
 ; Show the frame
 (send frame_main show #t)
