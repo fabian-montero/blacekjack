@@ -1,11 +1,13 @@
+(require games/cards)
+
 ; lista players de ejemplo para debugging
 (define (get_players_example)
   '(
-      ("dealer" "stay" (("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 1 0 0)) ())
+      ("dealer" "stay" (("four_clubs" 4 0 0)) ())
       ("fabian" "stay" (("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
-      ("dealer" "stay" (("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
-      ("Pablo" "stay" (("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
-      ("dealer" "stay" (("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
+      ("alejandro" "stay" (("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
+      ("vanessa" "stay" (("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
+      ("hazel" "stay" (("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
    )
 )
 
@@ -40,6 +42,18 @@
     ("eight_spades" 8 0 0) ("nine_spades" 9 0 0) ("ten_spades" 10 0 0) ("jack_spades" 10 0 0)
     ("queen_spades" 10 0 0) ("king_spades" 10 0 0)
   )
+)
+
+; Genera un deck nuevo de cartas y lo retorna aleatorizado.
+;
+; Parámetros:
+;   N/A  
+;
+; Retorna:
+;   La lista deck en orden aleatoreo
+;
+(define (gen_random_deck)
+  (shuffle-list (gen_deck) 7)
 )
 
 
@@ -169,6 +183,10 @@
 ;   verdadero si todos los jugadores ya se plantaron o falso si no
 ;
 (define (all_players_stayed? players)
+  ((cdr all_players_stayed_helper) players)
+)
+
+(define (all_players_stayed_helper players)
   (cond
     ((empty? players) #t)
     ((equal? (get_status (car players)) "playing") #f)
@@ -283,16 +301,12 @@
 ;   Llamada a endgame cuando el dealer ya se plantó
 ;
 (define (check_dealer players deck)
-  (check_dealer_helper (cdr players) deck)
-)
-
-(define (check_dealer_helper players deck)
   (cond
     ((> (hand_total (get_hand (get_dealer players))) 16  )
       (endgame (stay "dealer" players))
     )
     (else
-      (check_dealer (deal "dealer" players deck))
+      (check_dealer (deal "dealer" players deck) deck)
     )
   )
 )
