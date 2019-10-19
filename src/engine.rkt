@@ -60,30 +60,30 @@
 ; Obtiene la mano de un jugador
 ;
 ; Parámetros:
-;   name: Nombre del jugador buscado
+;   name: Jugador
 ;
 ; Retorna:
 ;   La mano del jugador seleccionado.
 ;   Si hay mas de 1 jugador con el mismo nombre,
 ;   se retorna la mano de la primera ocurrencia.
 ;
-(define (get_hand name)
-    (car (cdr (cdr name)))
+(define (get_hand player)
+    (car (cdr (cdr player)))
 )
 
 
 ; Obtiene el estado de juego de un jugador
 ;
 ; Parámetros:
-;   name: Nombre del jugador buscado
+;   name: Jugador
 ;
 ; Retorna:
 ;   El estado del jugador seleccionado.
 ;   Si hay mas de 1 jugador con el mismo nombre,
 ;   se retorna la mano de la primera ocurrencia.
 ;
-(define (get_status name)
-  (car (cdr name))
+(define (get_status player)
+  (car (cdr player))
 )
 
 
@@ -97,6 +97,20 @@
 ;
 (define (get_dealer players)
   (car players)
+)
+
+; Obtiene el nombre de juego de un jugador
+;
+; Parámetros:
+;   name: Jugador
+;
+; Retorna:
+;   El nombre del jugador seleccionado.
+;   Si hay mas de 1 jugador con el mismo nombre,
+;   se retorna el nombre de la primera ocurrencia
+;
+(define (get_name player)
+  (car player)
 )
 
 
@@ -126,7 +140,9 @@
     (else
       (deal_init_helper
         (cdr lista_de_nombres)
-        (append players (list(list (car lista_de_nombres) "playing" (list) (list))))
+        (append players
+          (list(list(car lista_de_nombres) "playing" (list) (list)))
+        )
       )
     )
   )
@@ -164,7 +180,8 @@
 (define (bust? players)
   (cond
     ((empty? players) #f)
-    ((> (hand_total (get_hand (car players))) 21) #t)
+    ((> (hand_total (get_hand (car players))) 21)
+      (cgange_status (get_name (car players)) "bust" players))
     (else
       (bust? (cdr players))
     )
@@ -172,7 +189,6 @@
 )
 
 
-; TO-DO: HAY QUE HACER QUE ESTO IGNORE AL DEALER
 ; Siempre que alguien se planta, revisa si todos los jugadores
 ; excepto el dealer estan plantados
 ;
@@ -275,21 +291,22 @@
 ;   Lista de jugadores con el jugador pasado en status stay,
 ;   si no se encuentra el jugador se retorna lista players intacta.
 ;
-(define (stay name players)
+(define (change_status name new_status players)
   (cond((empty? players)
          (list))
        ((equal? name (caar players))
         (cons (cons (caar players)
-               (cons 'stay
+               (cons new_status
                      (cons (caddar players)
                            (cons (cadr (cddar players))
                                  (list)))))
                (cdr players)))
         (else (cons (car players)
-                    (stay name (cdr players))))))
+                    (change_status name new_status (cdr players))))))
 
 
-; TO-DO: POR ALGUNA RAZÓN ESTA FUNCIÓN SALE INDEFINIDA, PERO NO SÉ POR QUÉ Y TENGO SUEÑO. DE FIJO SI SIRVE BIEN
+
+
 ; si el dealer tiene menos o igual a 16, pide cartas.
 ; si tiene mas de 16, se planta. se llama endgame.
 ;
@@ -303,7 +320,7 @@
 (define (check_dealer players deck)
   (cond
     ((> (hand_total (get_hand (get_dealer players))) 16  )
-      (endgame (stay "dealer" players))
+      (endgame (change_status "dealer" "stay" players))
     )
     (else
       (check_dealer (deal "dealer" players deck) deck)
