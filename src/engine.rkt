@@ -286,6 +286,10 @@
 ;   Llamada a endgame cuando el dealer ya se plantó
 ;
 (define (check_dealer players deck)
+  (check_dealer_helper (cdr players) deck)
+)
+
+(define (check_dealer_helper players deck)
   (cond
     ((> (hand_total (get_hand (get_dealer players))) 16  )
       (endgame (stay "dealer" players))
