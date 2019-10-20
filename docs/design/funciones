@@ -29,7 +29,7 @@ dialog_puntuation_table : dialog%
 <---------------------------------GUI--------------------------------------------------->
 (create_players names)
     recibe: Nombres de jugadores
-    Retorna: N/A
+    Retorna: Lista de jugadores con sus elementos gráficos agregados.
     Desc: Construye los canvas y páneles necesarios para los jugadores, luego los añade al pane_players, además añade a la list_players los objetos de los botones hit y stay.
 
 (hit_event button_event)
@@ -78,7 +78,7 @@ dialog_puntuation_table : dialog%
     Desc: activa el status turn para el jugador indicado.
 
 <---------------------------------ENGINE--------------------------------------------------->
-  
+
 (bCEj name_list)
 	recibe: una lista con los nombres de cada jugador de la partida
 	retorna:

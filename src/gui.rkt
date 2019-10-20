@@ -20,12 +20,14 @@
 (define (get_gui_elements player)
   (cadddr player))
 
+
+
 ; Descripción: Ventana principal del juego.
 ;
 (define frame_main (new frame%
-                        [label "BlackJack a lo chuzo"]
+                        [label "PROFE PÁSEME POR FAVOR"]
                         [min-width 1300]
-                        [min-height 800]
+                        [min-height 900]
                         [style '(no-resize-border)]
                         [stretchable-width #f]
                         [stretchable-height #f]))
@@ -37,7 +39,8 @@
                          [alignment '(center center)]
                          [stretchable-height #f]
                          [min-height (exact-round (* (send frame_main min-height) 0.4))]
-
+                         [border 10]
+                         [spacing 10]
                          ))
 
 ; Descripción: Panel con los canvas de los juegadores.
@@ -45,12 +48,13 @@
 (define pane_players (new horizontal-panel%
                          [parent frame_main]
                          [style '(auto-hscroll)]
-                         [border 20]
+                         [border 10]
+                         [spacing 10]
                          ))
 
 
 (define bitmap2 (let ([x (send (make-object bitmap% 1000 1000) make-dc)]
-                      [bite (read-bitmap "./resources/cards/4S.png")])
+                      [bite (read-bitmap "src/resources/cards/4S.png")])
                  (begin
                    (send x draw-bitmap-section-smooth bite 0 0 (* (send bite get-width) 0.29) (* (send bite get-height) 0.29) 0 0 (send bite get-width) (send bite get-height))
                    (send x draw-bitmap-section-smooth bite (* (* (send bite get-width) 0.29) 1) 0 (* (send bite get-width) 0.29) (* (send bite get-height) 0.29) 0 0 (send bite get-width) (send bite get-height))
@@ -61,18 +65,15 @@
 
 (define (paint-shit canvas dc)
   (begin
-    (call-with-values (lambda () (send canvas_dealer_cards get-view-start)) (lambda (x y) (send dc draw-bitmap-section bitmap2 x y x y (send canvas get-width) (send canvas get-height))))
-
-    ))
+    (call-with-values (lambda () (send canvas_dealer_cards get-view-start)) (lambda (x y) (send dc draw-bitmap-section bitmap2 x y x y (send canvas get-width) (send canvas get-height))))))
 
 
 ; Descripción: canvas para las cartas del dealer.
 ;
 (define canvas_dealer_cards (new canvas%
                                  [parent pane_dealer]
-                                 [style '(hscroll)]
+                                 [style '(hscroll control-border)]
                                  [paint-callback paint-shit]
-                                 [stretchable-height #t]
                                  [stretchable-width #f]
                                  [min-width (exact-round (* (send frame_main min-width) 0.6))]
                                  ))
@@ -86,7 +87,16 @@
                                  [stretchable-width #f]
                                  [min-width (exact-round (* (send frame_main min-width) 0.4))]
                                  ))
-
+; Construye los canvas y páneles necesarios para los jugadores,
+; luego los añade al pane_players, además añade a la list_players
+; los objetos de los botones hit y stay
+;
+; Parámetros:
+;   players: lista de jugadores
+;
+; Retorna:
+;   Lista de jugadores con sus elementos gráficos agregados.
+;
 (define (create_players players)
   (cond ((empty? players)
           (list))
@@ -94,24 +104,23 @@
           (cons (get_name (car players))
                 (cons (get_status (car players))
                       (cons (get_hand (car players))
-                            (cons (create_gui_elements (get_name (car players)))
+                            (cons (create_players_helper (get_name (car players)))
                                   (create_players (cdr players)))))))))
 
 
-(define (create_gui_elements name)
+(define (create_players_helper name)
   (begin
     (let* ([vertical (new vertical-pane%
                       [parent pane_players]
-                      [min-width 300]
+                      [min-width (exact-round (* (send frame_main min-width) 0.3333333333333333))]
                       [stretchable-width #f])]
             [canvas (new canvas%
                       [parent vertical]
-                      [style '(hscroll vscroll)]
+                      [style '(hscroll)]
                       [paint-callback paint-shit])]
 
             [horizontal (new horizontal-pane%
                       [parent vertical]
-                      [min-width 300]
                       [stretchable-width #f]
                       [stretchable-height #f])])
 
@@ -171,3 +180,9 @@
     (send punctuarion_table show #t)
   )
 )
+
+
+(define-values [W H]
+  (let ([f (new frame% [label "test"])])
+    (begin0 (send* f (maximize #t) (show #t) (get-client-size))
+      (send f show #f))))
