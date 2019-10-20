@@ -1,6 +1,7 @@
 #lang racket
 (require racket/gui
          racket/draw
+         dyoo-while-loop
          "engine.rkt")
 
 
@@ -74,13 +75,6 @@
                                  [min-width (exact-round (* (send frame_main min-width) 0.4))]
                                  ))
 
-(define (names_list players)
-  (cond ((empty? players)
-          (list))
-        (else
-          (cons (get_name (car players))
-                (names_list (cdr players))))))
-
 (define (create_players players)
   (cond ((empty? players)
           (list))
@@ -124,3 +118,44 @@
 ; Show the frame
 (send frame_main show #t)
 
+
+; Genera tabla de puntuaciones y la muestra
+;
+; Parámetros:
+;   players: lista de jugadores
+;
+; Retorna:
+;   N/A
+;
+(define (gen_tabla players)
+  (gen_tabla_helper (get_names_list players) (get_points_list players))
+)
+
+(define (gen_tabla_helper lista_de_jugadores lista_de_puntajes)
+  (begin
+    (define punctuarion_table
+      (new dialog%
+        [label "Tabla de Puntajes"]
+        [width 1000]
+        [height 500]
+      )
+    )
+    (define table
+      (new list-box%
+        [label #f]
+        [choices lista_de_jugadores]	 
+        [parent punctuarion_table]
+        [columns '("Jugador" "Puntaje")]
+        [style '(single column-headers reorderable-headers)]
+      )  
+    )
+    (let ([c 0] [puntajes lista_de_puntajes])
+      (while (not (empty? puntajes))
+        (send table set-string c (number->string (car puntajes)) 1)
+        (set! c (+ 1 c))
+        (set! puntajes (cdr puntajes))
+      )
+    )
+    (send punctuarion_table show #t)
+  )
+)

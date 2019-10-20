@@ -1,4 +1,5 @@
 #lang racket
+
 (require games/cards)
 (provide (all-defined-out))
 
@@ -262,6 +263,48 @@
           (blackjack? (cdr players)))))
 
 
+; Genera una lista del total de puntos de cada jugador
+;
+; Parámetros:
+;   players: lista de jugadores
+;
+; Retorna:
+;   Lista con los puntajes de cada jugador
+;
+(define (get_points_list players)
+  (cond
+    ((empty? players) players)
+    (else
+      (append
+        (list (hand_total (get_hand (car players))))
+        (get_points_list (cdr players))
+      )
+    )
+  )
+)
+
+
+; Genera una lista de los nombres de todos los jugadores
+;
+; Parámetros:
+;   players: lista de jugadores
+;
+; Retorna:
+;   Lista con los nombres de todos los jugadores
+;
+(define (get_names_list players)
+  (cond
+    ((empty? players) players)
+    (else
+      (append
+        (list (get_name (car players)))
+        (get_names_list (cdr players))
+      )
+    )
+  )
+)
+
+
 ; Genera tabla de puntuaciones usando listas
 ; de la forma: ((jugador puntaje) (jugador puntaje) ...).
 ;
@@ -272,13 +315,16 @@
 ;   Lista de listas con jugadores y puntajes.
 ;
 (define (endgame players)
-  (cond ((empty? players)
-         (list))
-        (else
-         (cons (cons (caar players)
-                     (cons (hand_total (caddar players))
-                           (list)))
-               (endgame (cdr players))))))
+  (cond
+    ((empty? players) (list))
+    (else
+      (list
+        (list  (get_names_list players))
+        (list  (get_points_list players))
+      )
+    )
+  )
+)
 
 
 ; Le aplica el status stay a un jugador determinado.
