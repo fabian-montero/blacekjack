@@ -1,9 +1,14 @@
 #lang racket
+(require racket/gui
+         racket/draw
+         "engine.rkt")
 
-(require racket/gui)
-(require racket/draw
-         pict)
 
+(define (get_gui_elements player)
+  (cadddr player))
+
+; Descripción: Ventana principal del juego.
+;
 (define frame_main (new frame%
                         [label "BlackJack a lo chuzo"]
                         [min-width 1300]
@@ -12,6 +17,8 @@
                         [stretchable-width #f]
                         [stretchable-height #f]))
 
+; Descripción: Panel con el canvas del dealer y el deck.
+;
 (define pane_dealer (new horizontal-pane%
                          [parent frame_main]
                          [alignment '(center center)]
@@ -20,10 +27,14 @@
 
                          ))
 
+; Descripción: Panel con los canvas de los juegadores.
+;
 (define pane_players (new horizontal-panel%
                          [parent frame_main]
                          [style '(auto-hscroll)]
+                         [border 20]
                          ))
+
 
 (define bitmap2 (let ([x (send (make-object bitmap% 1000 1000) make-dc)]
                       [bite (read-bitmap "/home/acnissarin/Projects/blacekjack/src/resources/cards/4S.png")])
@@ -37,20 +48,13 @@
 
 (define (paint-shit canvas dc)
   (begin
-    ;(send dc set-scale 0.55 0.55)
     (call-with-values (lambda () (send canvas_dealer_cards get-view-start)) (lambda (x y) (send dc draw-bitmap-section bitmap2 x y x y (send canvas get-width) (send canvas get-height))))
-    ;(send dc draw-bitmap (read-bitmap "/home/acnissarin/4S.xpm") 173 0)
-    ;(send dc draw-bitmap (read-bitmap "/home/acnissarin/7H.bmp") (* 173 1) 0)
-    ;(send dc draw-bitmap (read-bitmap "/home/acnissarin/7H.bmp") (* 173 2) 0)
-    ;(send dc draw-bitmap (read-bitmap "/home/acnissarin/7H.bmp") (* 173 3) 0)
-    ;(send dc draw-bitmap (read-bitmap "/home/acnissarin/7H.bmp") (* 173 4) 0)
-    ;(send dc draw-bitmap (read-bitmap "/home/acnissarin/7H.bmp") (* 173 5) 0)
-    ;(send dc draw-bitmap (read-bitmap "/home/acnissarin/7H.bmp") (* 173 6) 0)
-    ;(send dc draw-bitmap (read-bitmap "/home/acnissarin/7H.bmp") (* 173 7) 0)
-    ;(send dc draw-bitmap (read-bitmap "/home/acnissarin/4S.xpm") (* 173 1) 0)))
-    ))
-    
 
+    ))
+
+
+; Descripción: canvas para las cartas del dealer.
+;
 (define canvas_dealer_cards (new canvas%
                                  [parent pane_dealer]
                                  [style '(hscroll)]
@@ -60,6 +64,8 @@
                                  [min-width (exact-round (* (send frame_main min-width) 0.6))]
                                  ))
 
+; Descripción: canvas para las cartas del deck.
+;
 (define canvas_deck (new canvas%
                                  [parent pane_dealer]
                                  [style '(hscroll)]
@@ -68,11 +74,53 @@
                                  [min-width (exact-round (* (send frame_main min-width) 0.4))]
                                  ))
 
-(send canvas_dealer_cards init-auto-scrollbars 3000 1 0 0)
+(define (names_list players)
+  (cond ((empty? players)
+          (list))
+        (else
+          (cons (get_name (car players))
+                (names_list (cdr players))))))
+
+(define (create_players players)
+  (cond ((empty? players)
+          (list))
+        (else
+          (cons (get_name (car players))
+                (cons (get_status (car players))
+                      (cons (get_hand (car players))
+                            (cons (create_gui_elements (get_name (car players)))
+                                  (create_players (cdr players)))))))))
+
+
+(define (create_gui_elements name)
+  (begin
+    (let* ([vertical (new vertical-pane%
+                      [parent pane_players]
+                      [min-width 300]
+                      [stretchable-width #f])]
+            [canvas (new canvas%
+                      [parent vertical]
+                      [style '(hscroll vscroll)]
+                      [paint-callback paint-shit])]
+
+            [horizontal (new horizontal-pane%
+                      [parent vertical]
+                      [min-width 300]
+                      [stretchable-width #f]
+                      [stretchable-height #f])])
+
+          (list canvas (new button%
+                              [parent horizontal]
+                              [label "Hit"])
+                        (new button%
+                              [parent horizontal]
+                              [label "Stay"])
+                        (new message%
+                              [parent horizontal]
+                              [label name])))))
+
+
 
 ; Show the frame
 (send frame_main show #t)
 
-(send canvas_dealer_cards get-graphical-min-size)
-; Wait a second to let the window get ready
-; Draw the face

@@ -1,4 +1,6 @@
+#lang racket
 (require games/cards)
+(provide (all-defined-out))
 
 ; lista players de ejemplo para debugging
 (define (get_players_example)
@@ -15,7 +17,7 @@
 ; Genera un deck nuevo de cartas.
 ;
 ; Parámetros:
-;   N/A  
+;   N/A
 ;
 ; Retorna:
 ;   La lista deck
@@ -47,7 +49,7 @@
 ; Genera un deck nuevo de cartas y lo retorna aleatorizado.
 ;
 ; Parámetros:
-;   N/A  
+;   N/A
 ;
 ; Retorna:
 ;   La lista deck en orden aleatoreo
@@ -181,7 +183,7 @@
   (cond
     ((empty? players) #f)
     ((> (hand_total (get_hand (car players))) 21)
-      (cgange_status (get_name (car players)) "bust" players))
+      (change_status (get_name (car players)) "bust" players))
     (else
       (bust? (cdr players))
     )
