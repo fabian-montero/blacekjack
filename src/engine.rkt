@@ -6,11 +6,11 @@
 ; lista players de ejemplo para debugging
 (define (get_players_example)
   '(
-      ("dealer" "stay" (("four_clubs" 4 0 0)) ())
-      ("fabian" "stay" (("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
-      ("alejandro" "stay" (("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
-      ("vanessa" "stay" (("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
-      ("hazel" "stay" (("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
+      ("dealer" "stay" (("four_clubs" 4 0 0 #f)) ())
+      ("fabian" "stay" (("five_clubs" 5 0 0 #f) ("six_clubs" 6 0 0 #f) ("seven_clubs" 7 0 0 #f)) ())
+      ("alejandro" "stay" (("four_clubs" 4 0 0 #f) ("five_clubs" 5 0 0 #f) ("six_clubs" 6 0 0 #f) ("seven_clubs" 7 0 0 #f)) ())
+      ("vanessa" "stay" (("four_clubs" 4 0 0 #f) ("five_clubs" 5 0 0 #f) ("six_clubs" 6 0 0 #f) ("seven_clubs" 7 0 0 #f)) ())
+      ("hazel" "stay" (("four_clubs" 4 0 0 #f) ("five_clubs" 5 0 0 #f) ("six_clubs" 6 0 0 #f) ("seven_clubs" 7 0 0 #f)) ())
    )
 )
 
@@ -25,25 +25,25 @@
 ;
 (define (gen_deck)
   '(
-    ("ace_clubs" 1 0 0) ("two_clubs" 2 0 0) ("three_clubs" 3 0 0)
-    ("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)
-    ("eight_clubs" 8 0 0) ("nine_clubs" 9 0 0) ("ten_clubs" 10 0 0) ("jack_clubs" 10 0 0)
-    ("queen_clubs" 10 0 0) ("king_clubs" 10 0 0)
+    ("ace_clubs" 1 0 0 #f) ("two_clubs" 2 0 0 #f) ("three_clubs" 3 0 0 #f)
+    ("four_clubs" 4 0 0 #f) ("five_clubs" 5 0 0 #f) ("six_clubs" 6 0 0 #f) ("seven_clubs" 7 0 0 #f)
+    ("eight_clubs" 8 0 0 #f) ("nine_clubs" 9 0 0 #f) ("ten_clubs" 10 0 0 #f) ("jack_clubs" 10 0 0 #f)
+    ("queen_clubs" 10 0 0 #f) ("king_clubs" 10 0 0 #f)
 
-    ("ace_diamonds" 1 0 0) ("two_diamonds" 2 0 0) ("three_diamonds" 3 0 0)
-    ("four_diamonds" 4 0 0) ("five_diamonds" 5 0 0) ("six_diamonds" 6 0 0) ("seven_diamonds" 7 0 0)
-    ("eight_diamonds" 8 0 0) ("nine_diamonds" 9 0 0) ("ten_diamonds" 10 0 0) ("jack_diamonds" 10 0 0)
-    ("queen_diamonds" 10 0 0) ("king_diamonds" 10 0 0)
+    ("ace_diamonds" 1 0 0 #f) ("two_diamonds" 2 0 0 #f) ("three_diamonds" 3 0 0 #f)
+    ("four_diamonds" 4 0 0 #f) ("five_diamonds" 5 0 0 #f) ("six_diamonds" 6 0 0 #f) ("seven_diamonds" 7 0 0 #f)
+    ("eight_diamonds" 8 0 0 #f) ("nine_diamonds" 9 0 0 #f) ("ten_diamonds" 10 0 0 #f) ("jack_diamonds" 10 0 0 #f)
+    ("queen_diamonds" 10 0 0 #f) ("king_diamonds" 10 0 0 #f)
 
-    ("ace_hearts" 1 0 0) ("two_hearts" 2 0 0) ("three_hearts" 3 0 0)
-    ("four_hearts" 4 0 0) ("five_hearts" 5 0 0) ("six_hearts" 6 0 0) ("seven_hearts" 7 0 0)
-    ("eight_hearts" 8 0 0) ("nine_hearts" 9 0 0) ("ten_hearts" 10 0 0) ("jack_hearts" 10 0 0)
-    ("queen_hearts" 10 0 0) ("king_hearts" 10 0 0)
+    ("ace_hearts" 1 0 0 #f) ("two_hearts" 2 0 0 #f) ("three_hearts" 3 0 0 #f)
+    ("four_hearts" 4 0 0 #f) ("five_hearts" 5 0 0 #f) ("six_hearts" 6 0 0 #f) ("seven_hearts" 7 0 0 #f)
+    ("eight_hearts" 8 0 0 #f) ("nine_hearts" 9 0 0 #f) ("ten_hearts" 10 0 0 #f) ("jack_hearts" 10 0 0 #f)
+    ("queen_hearts" 10 0 0 #f) ("king_hearts" 10 0 0 #f)
 
-    ("ace_spades" 1 0 0) ("two_spades" 2 0 0) ("three_spades" 3 0 0)
-    ("four_spades" 4 0 0) ("five_spades" 5 0 0) ("six_spades" 6 0 0) ("seven_spades" 7 0 0)
-    ("eight_spades" 8 0 0) ("nine_spades" 9 0 0) ("ten_spades" 10 0 0) ("jack_spades" 10 0 0)
-    ("queen_spades" 10 0 0) ("king_spades" 10 0 0)
+    ("ace_spades" 1 0 0 #f) ("two_spades" 2 0 0 #f) ("three_spades" 3 0 0 #f)
+    ("four_spades" 4 0 0 #f) ("five_spades" 5 0 0 #f) ("six_spades" 6 0 0 #f) ("seven_spades" 7 0 0 #f)
+    ("eight_spades" 8 0 0 #f) ("nine_spades" 9 0 0 #f) ("ten_spades" 10 0 0 #f) ("jack_spades" 10 0 0 #f)
+    ("queen_spades" 10 0 0 #f) ("king_spades" 10 0 0 #f)
   )
 )
 
@@ -305,6 +305,28 @@
 )
 
 
+; Genera una lista de pares a partir de los elementos de 2 listas
+; tomado del taller funcional
+;
+; Parámetros:
+;   lista1: primera lista
+;   lista2: segunda lista
+;
+; Retorna:
+;   Lista de pares
+;
+(define (pares lista1 lista2)
+	(cond
+	  ((null? lista1) lista1)
+	  (else
+	    (append
+	      (list(list(car lista1)(car lista2)))
+	      (pares (cdr lista1) (cdr lista2)))
+	  )
+	)
+)
+
+
 ; Genera tabla de puntuaciones usando listas
 ; de la forma: ((jugador puntaje) (jugador puntaje) ...).
 ;
@@ -371,5 +393,174 @@
     (else
       (check_dealer (deal "dealer" players deck) deck)
     )
+  )
+)
+
+
+; Encuentra los elementos menores a un pivote de una lista
+;
+; Parámetros:
+;   pivote: pivote al que se va a comprar cada elemento de la lista
+;   lista: lista
+;
+; Retorna:
+;   Lista de elementos menores al pivote
+;
+(define (menores pivote lista)
+	(cond 
+	  ((null? lista) lista)
+          ((<= pivote (car (cdr (car lista)))) (cons (car lista) (menores pivote (cdr lista))))
+          (else
+	    (menores pivote (cdr lista))
+	  )
+	)
+)
+
+
+; Encuentra los elementos mayores a un pivote de una lista
+;
+; Parámetros:
+;   pivote: pivote al que se va a comprar cada elemento de la lista
+;   lista: lista
+;
+; Retorna:
+;   Lista de elementos mayores al pivote
+;
+(define (mayores pivote lista)
+	(cond
+	  ((null? lista) lista)
+          ((> pivote (car (cdr (car lista)))) (cons (car lista) (mayores pivote (cdr lista))))
+          (else
+	    (mayores pivote (cdr lista))
+	  )
+	)
+)
+
+
+; Quicksort adaptado para ordenar una lista de pares, tomando en cuenta
+; el segundo elemento de cada par. Este quicksort ordena de mayor a menor.
+;
+; Parámetros:
+;   lista: lista de pares a ordenar
+;
+; Retorna:
+;   lista de pares ordenada
+;
+(define (reverse_qsort lista)
+	(cond
+	  ((null? lista) lista)
+    (else
+      (append
+        (qsort (menores (car (cdr (car lista))) (cdr lista)))
+        (list (car lista))
+        (qsort (mayores (car (cdr (car lista))) (cdr lista)))
+      )
+    )
+  )
+)
+
+
+; Quicksort adaptado para ordenar una lista de pares, tomando en cuenta
+; el segundo elemento de cada par.
+;
+; Parámetros:
+;   lista: lista de pares a ordenar
+;
+; Retorna:
+;   lista de pares ordenada
+;
+(define (qsort lista)
+	(cond
+	  ((null? lista) lista)
+    (else
+      (append
+        (qsort (mayores (car (cdr (car lista))) (cdr lista)))
+        (list (car lista))
+        (qsort (menores (car (cdr (car lista))) (cdr lista)))
+      )
+    )
+  )
+)
+
+
+; Genera dos listas: de primeros elementos y de segundos elementos pares a
+; partir de los elementos de una lista de pares.
+; Revierte el efecto de (pares lista)
+;
+; Parámetros:
+;   lista: lista de pares
+;
+; Retorna:
+;   lista con ambas listas de primeros elementos y segundos elementos
+;
+(define (dispares lista)
+  (cond
+    ((empty? lista) lista)
+    (else
+      (append
+        (list (primeros lista))
+        (list (segundos lista))
+      )
+    )
+  )
+)
+
+
+; Obtiene los primeros de cada par de una lista de pares
+;
+; Parámetros:
+;   lista: lista de pares
+;
+; Retorna:
+;   lista con los primeros elementos de cada par de la lista
+;
+(define (primeros lista)
+  (cond
+    ((empty? lista) lista)
+    (else
+      (append
+        (list (car (car lista)))
+        (primeros (cdr lista))
+      )
+    )
+  )
+)
+
+
+; Obtiene los segundos de cada par de una lista de pares
+;
+; Parámetros:
+;   lista: lista de pares
+;
+; Retorna:
+;   lista con los segundos elementos de cada par de la lista
+;
+(define (segundos lista)
+  (cond
+    ((empty? lista) lista)
+    (else
+      (append
+        (cdr (car lista))
+        (segundos (cdr lista))
+      )
+    )
+  )
+)
+
+
+; Ejecuta blackjack_sort. Este algoritmo ordena a los elementos
+; de mayor a menor, pero cualquier elemento que sea mayor a 21, lo pone
+; de último
+;
+; Parámetros:
+;   lista: lista de pares
+;
+; Retorna:
+;   lista ordenada
+;
+(define (blackjack_sort lista)
+  (append
+    (reverse_qsort (mayores 21 lista))
+    (qsort (menores 21 lista))
   )
 )

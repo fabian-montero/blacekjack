@@ -8,11 +8,11 @@
 ; lista players de ejemplo para debugging
 (define (get_players_example)
   '(
-      ("dealer" "stay" (("four_clubs" 4 0 0)) ())
-      ("fabian" "stay" (("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
-      ("alejandro" "stay" (("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
-      ("vanessa" "stay" (("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
-      ("hazel" "stay" (("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
+      ("dealer" "stay" (("four_clubs" 4 0 0 #t)) ())
+      ("fabian" "stay" (("five_clubs" 5 0 0 #t) ("six_clubs" 6 0 0 #t) ("seven_clubs" 7 0 0 #t)) ())
+      ("alejandro" "stay" (("four_clubs" 4 0 0 #t) ("five_clubs" 5 0 0 #t) ("six_clubs" 6 0 0 #t) ("seven_clubs" 7 0 0 #t)) ())
+      ("vanessa" "stay" (("four_clubs" 4 0 0 #t) ("five_clubs" 5 0 0 #t) ("six_clubs" 6 0 0 #t) ("seven_clubs" 7 0 0 #t)) ())
+      ("hazel" "stay" (("four_clubs" 4 0 0 #t) ("five_clubs" 5 0 0 #t) ("six_clubs" 6 0 0 #t) ("seven_clubs" 7 0 0 #t)) ())
    )
 )
 
@@ -140,7 +140,9 @@
 ;   N/A
 ;
 (define (gen_tabla players)
-  (gen_tabla_helper (get_names_list players) (get_points_list players))
+  (let ([pack (dispares (blackjack_sort (pares (get_names_list players) (get_points_list players))))])
+    (gen_tabla_helper (car pack) (car (cdr pack)))
+  )
 )
 
 (define (gen_tabla_helper lista_de_jugadores lista_de_puntajes)
