@@ -3,6 +3,18 @@
          racket/draw
          dyoo-while-loop
          "engine.rkt")
+(provide (all-defined-out))
+
+; lista players de ejemplo para debugging
+(define (get_players_example)
+  '(
+      ("dealer" "stay" (("four_clubs" 4 0 0)) ())
+      ("fabian" "stay" (("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
+      ("alejandro" "stay" (("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
+      ("vanessa" "stay" (("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
+      ("hazel" "stay" (("four_clubs" 4 0 0) ("five_clubs" 5 0 0) ("six_clubs" 6 0 0) ("seven_clubs" 7 0 0)) ())
+   )
+)
 
 
 (define (get_gui_elements player)
