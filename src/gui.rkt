@@ -1,7 +1,11 @@
-(require racket/gui)
-(require racket/draw
-         pict)
+#lang racket
+(require racket/gui
+         racket/draw
+         "engine.rkt")
 
+
+(define (get_gui_elements player)
+  (cadddr player))
 
 ; Descripción: Ventana principal del juego.
 ;
@@ -28,6 +32,7 @@
 (define pane_players (new horizontal-panel%
                          [parent frame_main]
                          [style '(auto-hscroll)]
+                         [border 20]
                          ))
 
 
@@ -73,20 +78,48 @@
   (cond ((empty? players)
           (list))
         (else
-          (cons (caar players)
+          (cons (get_name (car players))
                 (names_list (cdr players))))))
 
 (define (create_players players)
-  (begin
-    (new tab-panel%
-      [choices (names_list players)]
-      [parent pane_players])
-    ))
-
-(define (fill_players_table players)
   (cond ((empty? players)
           (list))
-        (else )))
+        (else
+          (cons (get_name (car players))
+                (cons (get_status (car players))
+                      (cons (get_hand (car players))
+                            (cons (create_gui_elements (get_name (car players)))
+                                  (create_players (cdr players)))))))))
+
+
+(define (create_gui_elements name)
+  (begin
+    (let* ([vertical (new vertical-pane%
+                      [parent pane_players]
+                      [min-width 300]
+                      [stretchable-width #f])]
+            [canvas (new canvas%
+                      [parent vertical]
+                      [style '(hscroll vscroll)]
+                      [paint-callback paint-shit])]
+
+            [horizontal (new horizontal-pane%
+                      [parent vertical]
+                      [min-width 300]
+                      [stretchable-width #f]
+                      [stretchable-height #f])])
+
+          (list canvas (new button%
+                              [parent horizontal]
+                              [label "Hit"])
+                        (new button%
+                              [parent horizontal]
+                              [label "Stay"])
+                        (new message%
+                              [parent horizontal]
+                              [label name])))))
+
+
 
 ; Show the frame
 (send frame_main show #t)

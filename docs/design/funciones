@@ -12,7 +12,7 @@ canvas_dealer_cards : canvas%
     Desc: Contiene las cartas del dealer.
 
 canvas_deck : canvas%
-    Desc: Contiene una imágen que simula un deck.
+    Desc: Contiene una imagen que simula un deck.
 
 pane_players : horizontal-pane%
     Desc: Contiene una panel con sus componentes respectivos para cada jugador
@@ -77,13 +77,8 @@ dialog_puntuation_table : dialog%
     retorna: lista de jugadores actualizda.
     Desc: activa el status turn para el jugador indicado.
 
-(pass_turn players)
-    recibe: lista de jugadores
-    retorna: lista de jugadores actualizda.
-    Desc: activa el status turn para el siguiente jugador en status playing.
-
-
 <---------------------------------ENGINE--------------------------------------------------->
+  
 (bCEj name_list)
 	recibe: una lista con los nombres de cada jugador de la partida
 	retorna:
