@@ -305,8 +305,6 @@
                     (change_status name new_status (cdr players))))))
 
 
-
-
 ; si el dealer tiene menos o igual a 16, pide cartas.
 ; si tiene mas de 16, se planta. se llama endgame.
 ;
