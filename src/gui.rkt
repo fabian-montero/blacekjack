@@ -38,7 +38,7 @@
 
 
 (define bitmap2 (let ([x (send (make-object bitmap% 1000 1000) make-dc)]
-                      [bite (read-bitmap "/home/acnissarin/Projects/blacekjack/src/resources/cards/4S.png")])
+                      [bite (read-bitmap "./resources/cards/4S.png")])
                  (begin
                    (send x draw-bitmap-section-smooth bite 0 0 (* (send bite get-width) 0.29) (* (send bite get-height) 0.29) 0 0 (send bite get-width) (send bite get-height))
                    (send x draw-bitmap-section-smooth bite (* (* (send bite get-width) 0.29) 1) 0 (* (send bite get-width) 0.29) (* (send bite get-height) 0.29) 0 0 (send bite get-width) (send bite get-height))
@@ -143,11 +143,11 @@
     (define table
       (new list-box%
         [label #f]
-        [choices lista_de_jugadores]	 
+        [choices lista_de_jugadores]
         [parent punctuarion_table]
         [columns '("Jugador" "Puntaje")]
         [style '(single column-headers reorderable-headers)]
-      )  
+      )
     )
     (let ([c 0] [puntajes lista_de_puntajes])
       (while (not (empty? puntajes))
