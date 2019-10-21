@@ -407,7 +407,7 @@
 ;   Lista de elementos menores al pivote
 ;
 (define (menores pivote lista)
-	(cond 
+	(cond
 	  ((null? lista) lista)
           ((<= pivote (car (cdr (car lista)))) (cons (car lista) (menores pivote (cdr lista))))
           (else

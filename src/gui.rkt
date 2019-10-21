@@ -1,5 +1,5 @@
-#lang racket
-(require racket/gui
+#lang racket/gui
+(require ffi/unsafe
          racket/draw
          dyoo-while-loop
          "engine.rkt")
@@ -20,14 +20,24 @@
 (define (get_gui_elements player)
   (cadddr player))
 
+(define testing_frame (new frame% [label "test"]))
+
+(define-values [W H]
+  (let ([f testing_frame]
+        [tipo (cpointer-tag (send testing_frame get-handle))])
+    (cond ((equal? tipo 'GtkWidget)
+            (values 1366 768))
+          ((equal? tipo 'HWND)
+            (begin0 (send* f (maximize #t) (show #t) (get-client-size))
+              (send f show #f))))))
 
 
 ; Descripción: Ventana principal del juego.
 ;
 (define frame_main (new frame%
                         [label "PROFE PÁSEME POR FAVOR"]
-                        [min-width 1300]
-                        [min-height 900]
+                        [min-width (- W 10)]
+                        [min-height (- H 10)]
                         [style '(no-resize-border)]
                         [stretchable-width #f]
                         [stretchable-height #f]))
@@ -48,7 +58,7 @@
 (define pane_players (new horizontal-panel%
                          [parent frame_main]
                          [style '(auto-hscroll)]
-                         [border 10]
+                         [border 5]
                          [spacing 10]
                          ))
 
@@ -72,7 +82,7 @@
 ;
 (define canvas_dealer_cards (new canvas%
                                  [parent pane_dealer]
-                                 [style '(hscroll control-border)]
+                                 [style '(hscroll)]
                                  [paint-callback paint-shit]
                                  [stretchable-width #f]
                                  [min-width (exact-round (* (send frame_main min-width) 0.6))]
@@ -87,8 +97,9 @@
                                  [stretchable-width #f]
                                  [min-width (exact-round (* (send frame_main min-width) 0.4))]
                                  ))
+
 ; Construye los canvas y páneles necesarios para los jugadores,
-; luego los añade al pane_players, además añade a la list_players
+; luego los añade al pane_players, además añade a list_players
 ; los objetos de los botones hit y stay
 ;
 ; Parámetros:
@@ -121,18 +132,22 @@
 
             [horizontal (new horizontal-pane%
                       [parent vertical]
-                      [stretchable-width #f]
+                      [alignment '(center center)]
                       [stretchable-height #f])])
 
           (list canvas (new button%
                               [parent horizontal]
-                              [label "Hit"])
+                              [label "Hit"]
+                              [stretchable-height #t])
                         (new button%
                               [parent horizontal]
-                              [label "Stay"])
+                              [label "Stay"]
+                              [stretchable-height #t])
                         (new message%
                               [parent horizontal]
-                              [label name])))))
+                              [label name]
+
+                              [auto-resize #t])))))
 
 
 
@@ -182,9 +197,3 @@
     (send punctuarion_table show #t)
   )
 )
-
-
-(define-values [W H]
-  (let ([f (new frame% [label "test"])])
-    (begin0 (send* f (maximize #t) (show #t) (get-client-size))
-      (send f show #f))))
