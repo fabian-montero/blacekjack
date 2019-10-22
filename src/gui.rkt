@@ -26,7 +26,7 @@
   (let ([f testing_frame]
         [tipo (cpointer-tag (send testing_frame get-handle))])
     (cond ((equal? tipo 'GtkWidget)
-            (values 1366 768))
+            (values 1920 1080))
           ((equal? tipo 'HWND)
             (begin0 (send* f (maximize #t) (show #t) (get-client-size))
               (send f show #f))))))
@@ -35,9 +35,9 @@
 ; Descripción: Ventana principal del juego.
 ;
 (define frame_main (new frame%
-                        [label "PROFE PÁSEME POR FAVOR"]
-                        [min-width (- W 10)]
-                        [min-height (- H 10)]
+                        [label "BlackJack"]
+                        [min-width (exact-round (* W 0.80))]
+                        [min-height (exact-round (* H 0.80))]
                         [style '(no-resize-border)]
                         [stretchable-width #f]
                         [stretchable-height #f]))
@@ -49,7 +49,7 @@
                          [alignment '(center center)]
                          [stretchable-height #f]
                          [min-height (exact-round (* (send frame_main min-height) 0.4))]
-                         [border 10]
+                         [border 5]
                          [spacing 10]
                          ))
 
@@ -88,15 +88,27 @@
                                  [min-width (exact-round (* (send frame_main min-width) 0.6))]
                                  ))
 
+
+
+(define (draw_deck canvas dc)
+  (let ([cards (draw_deck_helper #f)])
+    ))
+
+
 ; Descripción: canvas para las cartas del deck.
 ;
 (define canvas_deck (new canvas%
                                  [parent pane_dealer]
                                  [style '(hscroll)]
+                                 [paint-callback draw_deck]
                                  [stretchable-height #t]
                                  [stretchable-width #f]
                                  [min-width (exact-round (* (send frame_main min-width) 0.4))]
                                  ))
+
+(define (draw_deck_helper update?)
+  (let ([canvas_cards (send (make-object bitmap% (* (length (gen_deck)) ) (send canvas_deck get-heigth) make-dc)])
+    ))
 
 ; Construye los canvas y páneles necesarios para los jugadores,
 ; luego los añade al pane_players, además añade a list_players
