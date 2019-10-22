@@ -162,10 +162,55 @@
 ;   de tipo integer.
 ;
 (define (hand_total hand)
+  (hand_total_helper hand 0)
+)
+
+; (+ (car (cdr (car hand))) (hand_total_helper (cdr hand)))
+(define (hand_total_helper hand total)
   (cond
-    ((empty? hand) 0)
+    ((empty? hand) total)
+    ((has_ace hand)
+      (cond
+        ((> (hand_total_helper (cdr hand) (+ total (car (cdr (car hand))))) 21)
+          (hand_total_helper (cdr hand) (+ total (car (cdr (car hand)))))
+        )
+        (else
+          (cond
+            ((> (+
+                  (hand_total_helper (cdr hand) (+ total (car (cdr (car hand)))))
+                  10
+                ) 21
+             ) (hand_total_helper (cdr hand) (+ total (car (cdr (car hand)))))
+            )
+            (else
+              (+
+                (hand_total_helper (cdr hand) (+ total (car (cdr (car hand)))))
+                10
+              )
+            )
+          )
+        )
+      )
+    )
     (else
-      (+ (car (cdr (car hand))) (hand_total (cdr hand)))
+      (hand_total_helper (cdr hand) (+ total (car (cdr (car hand)))))
+    )
+  )
+)
+
+
+(define (has_ace hand)
+  (cond
+    ((empty? hand) #f)
+    ((or
+      (equal? (car (car hand)) "ace_clubs")
+      (equal? (car (car hand)) "ace_diamonds")
+      (equal? (car (car hand)) "ace_hearts")
+      (equal? (car (car hand)) "ace_spades")
+     ) #t
+    )
+    (else
+      (has_ace (cdr hand))
     )
   )
 )
