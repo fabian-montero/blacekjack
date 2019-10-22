@@ -16,31 +16,9 @@
    )
 )
 
-(define players '())
+(define players '() )
 
-(define (deck)
-  '(
-    ("ace_clubs" 1 0 0 #f) ("two_clubs" 2 0 0 #f) ("three_clubs" 3 0 0 #f)
-    ("four_clubs" 4 0 0 #f) ("five_clubs" 5 0 0 #f) ("six_clubs" 6 0 0 #f) ("seven_clubs" 7 0 0 #f)
-    ("eight_clubs" 8 0 0 #f) ("nine_clubs" 9 0 0 #f) ("ten_clubs" 10 0 0 #f) ("jack_clubs" 10 0 0 #f)
-    ("queen_clubs" 10 0 0 #f) ("king_clubs" 10 0 0 #f)
-
-    ("ace_diamonds" 1 0 0 #f) ("two_diamonds" 2 0 0 #f) ("three_diamonds" 3 0 0 #f)
-    ("four_diamonds" 4 0 0 #f) ("five_diamonds" 5 0 0 #f) ("six_diamonds" 6 0 0 #f) ("seven_diamonds" 7 0 0 #f)
-    ("eight_diamonds" 8 0 0 #f) ("nine_diamonds" 9 0 0 #f) ("ten_diamonds" 10 0 0 #f) ("jack_diamonds" 10 0 0 #f)
-    ("queen_diamonds" 10 0 0 #f) ("king_diamonds" 10 0 0 #f)
-
-    ("ace_hearts" 1 0 0 #f) ("two_hearts" 2 0 0 #f) ("three_hearts" 3 0 0 #f)
-    ("four_hearts" 4 0 0 #f) ("five_hearts" 5 0 0 #f) ("six_hearts" 6 0 0 #f) ("seven_hearts" 7 0 0 #f)
-    ("eight_hearts" 8 0 0 #f) ("nine_hearts" 9 0 0 #f) ("ten_hearts" 10 0 0 #f) ("jack_hearts" 10 0 0 #f)
-    ("queen_hearts" 10 0 0 #f) ("king_hearts" 10 0 0 #f)
-
-    ("ace_spades" 1 0 0 #f) ("two_spades" 2 0 0 #f) ("three_spades" 3 0 0 #f)
-    ("four_spades" 4 0 0 #f) ("five_spades" 5 0 0 #f) ("six_spades" 6 0 0 #f) ("seven_spades" 7 0 0 #f)
-    ("eight_spades" 8 0 0 #f) ("nine_spades" 9 0 0 #f) ("ten_spades" 10 0 0 #f) ("jack_spades" 10 0 0 #f)
-    ("queen_spades" 10 0 0 #f) ("king_spades" 10 0 0 #f)
-  )
-)
+(define deck '() )
 
 
 (define (get_gui_elements player)
