@@ -16,6 +16,32 @@
    )
 )
 
+(define players '())
+
+(define (deck)
+  '(
+    ("ace_clubs" 1 0 0 #f) ("two_clubs" 2 0 0 #f) ("three_clubs" 3 0 0 #f)
+    ("four_clubs" 4 0 0 #f) ("five_clubs" 5 0 0 #f) ("six_clubs" 6 0 0 #f) ("seven_clubs" 7 0 0 #f)
+    ("eight_clubs" 8 0 0 #f) ("nine_clubs" 9 0 0 #f) ("ten_clubs" 10 0 0 #f) ("jack_clubs" 10 0 0 #f)
+    ("queen_clubs" 10 0 0 #f) ("king_clubs" 10 0 0 #f)
+
+    ("ace_diamonds" 1 0 0 #f) ("two_diamonds" 2 0 0 #f) ("three_diamonds" 3 0 0 #f)
+    ("four_diamonds" 4 0 0 #f) ("five_diamonds" 5 0 0 #f) ("six_diamonds" 6 0 0 #f) ("seven_diamonds" 7 0 0 #f)
+    ("eight_diamonds" 8 0 0 #f) ("nine_diamonds" 9 0 0 #f) ("ten_diamonds" 10 0 0 #f) ("jack_diamonds" 10 0 0 #f)
+    ("queen_diamonds" 10 0 0 #f) ("king_diamonds" 10 0 0 #f)
+
+    ("ace_hearts" 1 0 0 #f) ("two_hearts" 2 0 0 #f) ("three_hearts" 3 0 0 #f)
+    ("four_hearts" 4 0 0 #f) ("five_hearts" 5 0 0 #f) ("six_hearts" 6 0 0 #f) ("seven_hearts" 7 0 0 #f)
+    ("eight_hearts" 8 0 0 #f) ("nine_hearts" 9 0 0 #f) ("ten_hearts" 10 0 0 #f) ("jack_hearts" 10 0 0 #f)
+    ("queen_hearts" 10 0 0 #f) ("king_hearts" 10 0 0 #f)
+
+    ("ace_spades" 1 0 0 #f) ("two_spades" 2 0 0 #f) ("three_spades" 3 0 0 #f)
+    ("four_spades" 4 0 0 #f) ("five_spades" 5 0 0 #f) ("six_spades" 6 0 0 #f) ("seven_spades" 7 0 0 #f)
+    ("eight_spades" 8 0 0 #f) ("nine_spades" 9 0 0 #f) ("ten_spades" 10 0 0 #f) ("jack_spades" 10 0 0 #f)
+    ("queen_spades" 10 0 0 #f) ("king_spades" 10 0 0 #f)
+  )
+)
+
 
 (define (get_gui_elements player)
   (cadddr player))
@@ -92,14 +118,13 @@
 
 (define (draw_deck canvas dc)
   (let ([cards (draw_deck_helper #f)])
-    ))
-
+    (send dc draw-bitmap-section cards 0 0 0 0 (send canvas get-width) (send canvas get-height))))
 
 ; Descripción: canvas para las cartas del deck.
 ;
 (define canvas_deck (new canvas%
                                  [parent pane_dealer]
-                                 [style '(hscroll)]
+                                 [style '(hscroll transparent)]
                                  [paint-callback draw_deck]
                                  [stretchable-height #t]
                                  [stretchable-width #f]
@@ -107,8 +132,8 @@
                                  ))
 
 (define (draw_deck_helper update?)
-  (let ([canvas_cards (send (make-object bitmap% (* (length (gen_deck)) ) (send canvas_deck get-heigth) make-dc)])
-    ))
+  (let ([canvas_cards (make-object bitmap% (* (length (gen_deck)) (* (/ (send canvas_deck get-height) 600) 600)) (send canvas_deck get-height))])
+    canvas_cards))
 
 ; Construye los canvas y páneles necesarios para los jugadores,
 ; luego los añade al pane_players, además añade a list_players
@@ -139,7 +164,7 @@
                       [stretchable-width #f])]
             [canvas (new canvas%
                       [parent vertical]
-                      [style '(hscroll)]
+                      [style '(hscroll transparent)]
                       [paint-callback paint-shit])]
 
             [horizontal (new horizontal-pane%
