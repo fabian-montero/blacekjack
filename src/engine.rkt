@@ -25,7 +25,7 @@
 ;
 (define (gen_deck)
   (shuffle-list
-    (
+    '(
       ("ace_clubs" 1 0 0 #f) ("two_clubs" 2 0 0 #f) ("three_clubs" 3 0 0 #f)
       ("four_clubs" 4 0 0 #f) ("five_clubs" 5 0 0 #f) ("six_clubs" 6 0 0 #f) ("seven_clubs" 7 0 0 #f)
       ("eight_clubs" 8 0 0 #f) ("nine_clubs" 9 0 0 #f) ("ten_clubs" 10 0 0 #f) ("jack_clubs" 10 0 0 #f)

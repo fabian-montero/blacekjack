@@ -30,7 +30,7 @@
   (let ([f testing_frame]
         [tipo (cpointer-tag (send testing_frame get-handle))])
     (cond ((equal? tipo 'GtkWidget)
-            (values 1920 1080))
+            (values 2000 2000))
           ((equal? tipo 'HWND)
             (begin0 (send* f (maximize #t) (show #t) (get-client-size))
               (send f show #f))))))
