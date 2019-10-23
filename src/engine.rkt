@@ -118,6 +118,13 @@
   (car player)
 )
 
+(define (get_player name players)
+  (cond ((empty? players) (list))
+        ((equal? name (get_name (car players)))
+          (car players))
+        (else
+          (get_player name (cdr players)))))
+
 
 ; Construye la lista players al inicio de la partida
 ; con el nombre, el status de playing, lista de cartas
