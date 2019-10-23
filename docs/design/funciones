@@ -26,9 +26,12 @@ list_deck : list (nombre, bitmap%, valor, init_X, init_Y)
 dialog_puntuation_table : dialog%
     Desc: Muestra las puntuaciones de los jugadores al finalizar una partida, también permite reiniciar el juego.
 
+deck_imgs : list(message%)
+  Desc: Contiene la lista de imágenes del deck que serán dibujados en su respectivo contenedor
+
 <---------------------------------GUI--------------------------------------------------->
-(create_players names)
-    recibe: Nombres de jugadores
+(create_players names total)
+    recibe: Nombres de jugadores y número de jugadores.
     Retorna: Lista de jugadores con sus elementos gráficos agregados.
     Desc: Construye los canvas y páneles necesarios para los jugadores, luego los añade al pane_players, además añade a la list_players los objetos de los botones hit y stay.
 
