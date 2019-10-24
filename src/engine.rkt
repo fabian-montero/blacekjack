@@ -174,7 +174,7 @@
   (hand_total_helper hand 0)
 )
 
-; (+ (car (cdr (car hand))) (hand_total_helper (cdr hand)))
+
 (define (hand_total_helper hand total)
   (cond
     ((empty? hand) total)
@@ -208,6 +208,16 @@
 )
 
 
+; Informa si un jugador tiene alguno de los 4 aces
+; en su mano.
+;
+; Parámetros:
+;   hand: La mano de un jugador
+;
+; Retorna:
+;   Verdadero si el jugador tiene un ace en su mano,
+;   falso si no.
+;
 (define (has_ace hand)
   (cond
     ((empty? hand) #f)
@@ -346,8 +356,8 @@
 )
 
 
-; Genera una lista de pares a partir de los elementos de 2 listas
-; tomado del taller funcional
+; Genera una lista de pares a partir de los elementos de 2 listas.
+; Tomado del taller funcional
 ;
 ; Parámetros:
 ;   lista1: primera lista
