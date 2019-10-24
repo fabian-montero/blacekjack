@@ -2,24 +2,13 @@
 (require ffi/unsafe
          dyoo-while-loop
          "engine.rkt"
-         pict
-         )
+         pict)
 (provide (all-defined-out))
 
-; lista players de ejemplo para debugging
-(define (get_players_example)
-  '(
-      ("dealer" "stay" (("five_clubs" 5 0 0 #t) ("six_clubs" 6 0 0 #t) ("king_clubs" 10 0 0 #t)) ())
-      ("fabian" "stay" (("five_clubs" 5 0 0 #t) ("six_clubs" 6 0 0 #t) ("seven_clubs" 7 0 0 #t)) ())
-      ("alejandro" "stay" (("king_clubs" 10 0 0 #t) ("ace_clubs" 1 0 0 #f)) ())
-      ("vanessa" "stay" (("four_clubs" 4 0 0 #t) ("five_clubs" 5 0 0 #t) ("six_clubs" 6 0 0 #t) ("seven_clubs" 7 0 0 #t)) ())
-      ("hazel" "stay" (("four_clubs" 4 0 0 #t) ("five_clubs" 5 0 0 #t) ("six_clubs" 6 0 0 #t) ("seven_clubs" 7 0 0 #t) ("seven_clubs" 7 0 0 #t)) ())
-   )
-)
 
-(define players (get_players_example))
+(define players '())
 
-(define deck (gen_deck))
+(define deck '())
 
 (define (get_gui_elements player)
   (cadddr player))
@@ -57,7 +46,7 @@
                          [stretchable-height #f]
                          [min-height (exact-round (* (send frame_main min-height) 0.4))]
                          [border 5]
-                         [spacing 10]
+                         [spacing 40]
                          ))
 
 ; Descripción: Panel con los canvas de los juegadores.
@@ -66,20 +55,10 @@
                          [parent frame_main]
                          [style '(auto-hscroll)]
                          [alignment '(center center)]
-                         [border 5]
-                         [spacing 20]
+                         [border 40]
+                         [spacing 100]
+               
                          ))
-
-
-;(define bitmap2 (let ([x (send (make-object bitmap% 1000 1000) make-dc)]
-;                      [bite (read-bitmap "./resources/cards/4S.png")])
-;                 (begin
-;                   (send x draw-bitmap-section-smooth bite 0 0 (* (send bite get-width) 0.29) (* (send bite get-height) 0.29) 0 0 (send bite get-width) (send bite get-height))
-;                   (send x draw-bitmap-section-smooth bite (* (* (send bite get-width) 0.29) 1) 0 (* (send bite get-width) 0.29) (* (send bite get-height) 0.29) 0 0 (send bite get-width) (send bite get-height))
-;                   (send x draw-bitmap-section-smooth bite (* (* (send bite get-width) 0.29) 2) 0 (* (send bite get-width) 0.29) (* (send bite get-height) 0.29) 0 0 (send bite get-width) (send bite get-height))
-;                   (send x draw-bitmap-section-smooth bite (* (* (send bite get-width) 0.29) 3) 0 (* (send bite get-width) 0.29) (* (send bite get-height) 0.29) 0 0 (send bite get-width) (send bite get-height))
-;                   ;(send x draw-bitmap-section-smooth  173 0 173 264 0 0 173 264)
-;                   (send x get-bitmap))))
 
 
 ; Descripción: canvas para las cartas del dealer.
@@ -88,6 +67,7 @@
                                  [parent pane_dealer]
                                  [style '(auto-hscroll)]
                                  [stretchable-width #f]
+                                 [alignment '(right center)]
                                  [min-width (exact-round (* (send frame_main min-width) 0.5))]
                                  ))
 
@@ -99,22 +79,30 @@
 ;
 (define canvas_deck (new horizontal-panel%
                                  [parent pane_dealer]
-                                 [alignment '(center top)]
+                                 [alignment '(left center)]
                                  [stretchable-width #f]
                                  [min-width (exact-round (* (send frame_main min-width) 0.5))]
                                  ))
 
+
 (define (draw_deck)
   (new message% [parent canvas_deck]
-                [label (pict->bitmap (scale (bitmap (read-bitmap (string-append (path->string (find-system-path 'orig-dir))  "src/resources/cards/reverse.png"))) 0.3))]))
+                [label (pict->bitmap (scale (bitmap (read-bitmap (string-append "./resources/cards/reverse.png"))) 0.2))]))
+
 
 (define (draw_dealer_cards hand)
   (cond ((empty? hand)
           (list))
         (else
           (cons (append (car hand) (new message% [parent canvas_dealer_cards]
-                                                 [label (pict->bitmap (scale (bitmap (read-bitmap (string-append (path->string (find-system-path 'orig-dir)) "src/resources/cards/" (cond ((faced_up? (car hand)) (caar hand)) (else "reverse")) ".png"))) 0.3))]))
+                                                 [label (pict->bitmap (scale (bitmap (read-bitmap (string-append "./resources/cards/" (cond ((faced_up? (car hand)) (caar hand)) (else "reverse")) ".png"))) 0.2))]))
                 (draw_dealer_cards (cdr hand))))))
+
+
+(define (draw_player_cards card panel)
+  (new message% [parent panel]
+                [label (pict->bitmap (scale (bitmap (read-bitmap (string-append "./resources/cards/" card ".png"))) 0.2))]))
+
 
 (define (hit_event button event)
   (let* ([name (send (caddr (send (send button get-parent) get-children)) get-label)]
@@ -128,13 +116,16 @@
       (set! players new_players)
       (set! deck (cdr deck))
       (draw_player_cards (car (list-ref cards (- (length cards) 1))) panel)
+      (send (cadddr (send (send button get-parent) get-children)) set-label (string-append "Score: " (number->string (hand_total cards))))
       (cond ((bust? player)
               (send button enable #f)
               (send stay_button enable #f)
               (send message_name set-label (string-append name " (busted)"))
               (set! players (change_status name "stay" new_players))
+              (cond ((all_players_stayed? players)
+                     (terminator)))
               )
-            ((blackjack? player)
+            ((blackjack? players)
               (for-each
                 (lambda (panel)
                   (for-each
@@ -142,6 +133,7 @@
                       (cond ((is-a? but button%) (send but enable #f))))
                   (send (cadr (send panel get-children)) get-children)))
               (send (send (send (send button get-parent) get-parent) get-parent) get-children))
+              (terminator)
               )))))
 
 (define (stay_event button event)
@@ -153,7 +145,9 @@
       (send button enable #f)
       (send hit_button enable #f)
       (send message_name set-label (string-append name " (stayed)"))
-      (terminator)
+      (cond ((all_players_stayed? players)
+             
+             (terminator)))
       )))
 
 ; Construye los canvas y páneles necesarios para los jugadores,
@@ -174,25 +168,27 @@
          (cons (append (list (get_name (car players)))
                      (cons (get_status (car players))
                            (cons (get_hand (car players))
-                                 (create_players_helper (get_name (car players)) total))))
+                                 (create_players_helper (get_name (car players)) total (get_hand (car players))))))
                (create_players (cdr players) total)))))
 
 
-(define (create_players_helper name total)
+(define (create_players_helper name total hand)
   (begin
     (let* ([vertical (new vertical-pane%
                       [parent pane_players]
-                      [min-width (exact-round (* (send frame_main min-width) (cond ((>= total 3) 0.33) ((equal? total 2) 0.5) ((equal? total 1) 1))))]
                       [stretchable-width #f])]
             [canvas (new horizontal-panel%
                       [parent vertical]
+                      [min-width 426]
                       [style '(auto-hscroll)]
                       [alignment '(center center)]
-                      [stretchable-height #t])]
+                      [stretchable-height #f]
+                      [stretchable-width #f])]
 
             [horizontal (new horizontal-pane%
                       [parent vertical]
                       [alignment '(center center)]
+                      [vert-margin 60]
                       [stretchable-height #f])])
 
           (begin
@@ -200,34 +196,25 @@
             ;(new message% [parent canvas]
                           ;[label cards]))
 
-            (cons canvas
-                  (cons (new button%
-                                [parent horizontal]
-                                [label "Hit"]
-                                [callback hit_event]
-                                [stretchable-height #t])
-                        (cons (new button%
-                                [parent horizontal]
-                                [label "Stay"]
-                                [callback stay_event]
-                                [stretchable-height #t])
-                              (cons (new message%
-                                [parent horizontal]
-                                [label name]
-                                [auto-resize #t])
-                                    (list)))))))))
-
-
-(define (draw_player_cards card panel)
-  (new message% [parent panel]
-                [label (pict->bitmap (scale (bitmap (read-bitmap (string-append (path->string (find-system-path 'orig-dir)) "src/resources/cards/" card ".png"))) 0.3))]))
-
-
-
-; Show the frame
-(send frame_main show #t)
-
-
+            (new button%
+                 [parent horizontal]
+                 [label "Hit"]
+                 [callback hit_event]
+                 [stretchable-height #t])
+            (new button%
+                 [parent horizontal]
+                 [label "Stay"]
+                 [callback stay_event]
+                 [stretchable-height #t])
+            (new message%
+                 [parent horizontal]
+                 [label name]
+                 [auto-resize #t])
+            (new message%
+                 [parent horizontal]
+                 [label (string-append "Score: " (number->string (hand_total hand)))]
+                 [horiz-margin 10]
+                 [auto-resize #t])))))
 
 
 ; Genera tabla de puntuaciones y la muestra
@@ -277,6 +264,45 @@
   (begin
     (for-each (lambda (child) (send canvas_dealer_cards delete-child child)) (send canvas_dealer_cards get-children))
     (set! players (check_dealer players deck))
-    (draw_dealer_cards (get_hand (car players)))
-
+    
+    (draw_dealer_cards (cons (flip_card (car (get_hand (car players))) #t) (cdr (get_hand (car players)))))
+    (gen_tabla players)
     ))
+
+(define (bCEj X)
+  (let* ([names (append (list "dealer") X)]
+        [init_players (deal_init names '())]
+        [init_cards '()])
+    (begin
+      (set! deck (gen_deck))
+      (while (not (empty? names))
+        (set! init_players (deal (car names) init_players deck))
+        (set! deck (cdr deck))
+        (set! init_players (deal (car names) init_players deck))
+        (set! deck (cdr deck))
+        (set! names (cdr names)))
+      (set! players init_players)
+      (draw_deck)
+      (draw_dealer_cards (get_hand (car players)))
+      (create_players (cdr players) (length X))
+      (set! init_players (cdr init_players))
+      (set! init_cards (get_hand (car init_players)))
+
+      (let* ([panels (send pane_players get-children)]
+             [current_panel (car (send (car panels) get-children))])
+             (while (not (empty? panels))
+               (while (not (empty? init_cards))
+                 (draw_player_cards (caar init_cards) current_panel)
+                 (set! init_cards (cdr init_cards)))
+               (set! panels (cdr panels))
+               (set! init_players (cdr init_players))
+               (cond ((not (empty? init_players)) (set! init_cards (get_hand (car init_players)))))
+               (cond ((not (empty? panels)) (set! current_panel (car (send (car panels) get-children)))))
+               )
+             )
+
+      (cond ((blackjack? players)
+             (terminator)
+             (send frame_main show #f))
+            (else
+             (send frame_main show #t))))))

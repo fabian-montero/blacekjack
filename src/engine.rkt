@@ -3,17 +3,6 @@
 (require games/cards)
 (provide (all-defined-out))
 
-; lista players de ejemplo para debugging
-(define (get_players_example)
-  '(
-      ("dealer" "stay" (("five_clubs" 5 0 0 #t) ("ace_clubs" 1 0 0 #f)) ())
-      ("fabian" "stay" (("five_clubs" 5 0 0 #t) ("six_clubs" 6 0 0 #t) ("seven_clubs" 7 0 0 #t)) ())
-      ("alejandro" "stay" (("king_clubs" 10 0 0 #t) ("ace_clubs" 1 0 0 #f)) ())
-      ("vanessa" "stay" (("four_clubs" 4 0 0 #t) ("five_clubs" 5 0 0 #t) ("six_clubs" 6 0 0 #t) ("seven_clubs" 7 0 0 #t)) ())
-      ("hazel" "stay" (("four_clubs" 4 0 0 #t) ("five_clubs" 5 0 0 #t) ("six_clubs" 6 0 0 #t) ("seven_clubs" 7 0 0 #t)) ())
-   )
-)
-
 
 ; Genera un deck nuevo de cartas.
 ;
@@ -259,19 +248,21 @@
 ;   verdadero si todos los jugadores ya se plantaron o falso si no
 ;
 (define (all_players_stayed? players)
-  ((cdr all_players_stayed_helper) players)
+  (all_players_stayed_helper (cdr players))
 )
 
 (define (all_players_stayed_helper players)
   (cond
     ((empty? players) #t)
     ((equal? (get_status (car players)) "playing") #f)
-    ((equal? (get_status (car players)) "turn") #f)
     (else
-      (all_players_stayed? (cdr players))
+      (all_players_stayed_helper (cdr players))
     )
   )
 )
+
+(define (flip_card card flip)
+  (append (reverse (cdr (reverse card))) (list flip)))
 
 
 ; Agrega una carta a las cartas de un jugador determinado.
@@ -291,27 +282,32 @@
         ((equal? name (caar players))
          (cons (cons (caar players)
                (cons (cadar players)
-                     (cons (append (caddar players) (list (car deck)))
+                     (cons (append (caddar players) (list (cond ((and (equal? name "dealer") (>= (length (get_hand (car players))) 1)) (flip_card (car deck) #t)) (else (car deck)))))
                            (cons (cadr (cddar players))
                                  (list)))))
                (cdr players)))
         (else
          (cons (car players)
-                 (deal name (cdr players) deck))))
-)
+                 (deal name (cdr players) deck)))))
 
 
-; Despues de hacer un deal, se ejecuta esta función para
-; ver si el jugador en turno obtuvo un bust.
+; Revisa si algún jugador de la lista ha obtenido un blackjack
 ;
 ; Parámetros:
-;   players: lista de propiedades de un jugador
+;   players: lista de jugadores
 ;
 ; Retorna:
 ;   Verdadero si alguien lo obtuvo o falso si nadie lo consigue.
 ;
-(define (blackjack? player)
-  (equal? (hand_total (get_hand player)) 21))
+(define (blackjack? players)
+  (cond ((empty? players)
+          #f)
+        ((equal? (caar players) "dealer")
+          (blackjack? (cdr players)))
+        ((= (hand_total (caddar players)) 21)
+          #t)
+        (else
+          (blackjack? (cdr players)))))
 
 
 ; Genera una lista del total de puntos de cada jugador
