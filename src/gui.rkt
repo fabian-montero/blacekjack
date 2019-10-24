@@ -9,11 +9,11 @@
 ; lista players de ejemplo para debugging
 (define (get_players_example)
   '(
-      ("dealer" "stay" (("four_clubs" 4 0 0 #t)) ())
+      ("dealer" "stay" (("five_clubs" 5 0 0 #t) ("six_clubs" 6 0 0 #t) ("king_clubs" 10 0 0 #t)) ())
       ("fabian" "stay" (("five_clubs" 5 0 0 #t) ("six_clubs" 6 0 0 #t) ("seven_clubs" 7 0 0 #t)) ())
-      ("alejandro" "stay" (("four_clubs" 4 0 0 #t) ("five_clubs" 5 0 0 #t) ("six_clubs" 6 0 0 #t) ("seven_clubs" 7 0 0 #t)) ())
+      ("alejandro" "stay" (("king_clubs" 10 0 0 #t) ("ace_clubs" 1 0 0 #f)) ())
       ("vanessa" "stay" (("four_clubs" 4 0 0 #t) ("five_clubs" 5 0 0 #t) ("six_clubs" 6 0 0 #t) ("seven_clubs" 7 0 0 #t)) ())
-      ("hazel" "stay" (("four_clubs" 4 0 0 #t) ("five_clubs" 5 0 0 #t) ("six_clubs" 6 0 0 #t) ("seven_clubs" 7 0 0 #t)) ())
+      ("hazel" "stay" (("four_clubs" 4 0 0 #t) ("five_clubs" 5 0 0 #t) ("six_clubs" 6 0 0 #t) ("seven_clubs" 7 0 0 #t) ("seven_clubs" 7 0 0 #t)) ())
    )
 )
 
@@ -23,6 +23,9 @@
 
 (define (get_gui_elements player)
   (cadddr player))
+
+(define (faced_up? card)
+  (cadr (cdddr card)))
 
 (define testing_frame (new frame% [label "test"]))
 
@@ -103,27 +106,55 @@
 
 (define (draw_deck)
   (new message% [parent canvas_deck]
-                [label (pict->bitmap (scale (bitmap (read-bitmap (string-append "./resources/cards/reverse.png"))) 0.3))]))
+                [label (pict->bitmap (scale (bitmap (read-bitmap (string-append (path->string (find-system-path 'orig-dir))  "src/resources/cards/reverse.png"))) 0.3))]))
 
 (define (draw_dealer_cards hand)
   (cond ((empty? hand)
           (list))
         (else
           (cons (append (car hand) (new message% [parent canvas_dealer_cards]
-                                                 [label (pict->bitmap (scale (bitmap (read-bitmap (string-append "./resources/cards/JH.png"))) 0.3))]))
+                                                 [label (pict->bitmap (scale (bitmap (read-bitmap (string-append (path->string (find-system-path 'orig-dir)) "src/resources/cards/" (cond ((faced_up? (car hand)) (caar hand)) (else "reverse")) ".png"))) 0.3))]))
                 (draw_dealer_cards (cdr hand))))))
 
 (define (hit_event button event)
   (let* ([name (send (caddr (send (send button get-parent) get-children)) get-label)]
         [new_players (deal name players deck)]
         [player (get_player name new_players)]
-        [cards (get_hand player)])
+        [stay_button (cadr (send (send button get-parent) get-children))]
+        [cards (get_hand player)]
+        [panel (car (send (send (send button get-parent) get-parent) get-children))]
+        [message_name (caddr (send (send button get-parent) get-children))])
     (begin
       (set! players new_players)
       (set! deck (cdr deck))
-      (while (not (empty? cards))
-        (draw_player_cards (caar cards) (car (get_gui_elements player)))
-        (set! cards (cdr cards))))))
+      (draw_player_cards (car (list-ref cards (- (length cards) 1))) panel)
+      (cond ((bust? player)
+              (send button enable #f)
+              (send stay_button enable #f)
+              (send message_name set-label (string-append name " (busted)"))
+              (set! players (change_status name "stay" new_players))
+              )
+            ((blackjack? player)
+              (for-each
+                (lambda (panel)
+                  (for-each
+                    (lambda (but)
+                      (cond ((is-a? but button%) (send but enable #f))))
+                  (send (cadr (send panel get-children)) get-children)))
+              (send (send (send (send button get-parent) get-parent) get-parent) get-children))
+              )))))
+
+(define (stay_event button event)
+  (let* ([name (send (caddr (send (send button get-parent) get-children)) get-label)]
+        [hit_button (car (send (send button get-parent) get-children))]
+        [message_name (caddr (send (send button get-parent) get-children))])
+    (begin
+      (set! players (change_status name "stay" players))
+      (send button enable #f)
+      (send hit_button enable #f)
+      (send message_name set-label (string-append name " (stayed)"))
+      (terminator)
+      )))
 
 ; Construye los canvas y páneles necesarios para los jugadores,
 ; luego los añade al pane_players, además añade a list_players
@@ -168,28 +199,34 @@
             ;(let ([cards (overlay/offset (scale 0.3 (bitmap/file (string-append "./resources/cards/JH.png"))) 10 10 (scale 0.3 (bitmap/file (string-append "./resources/cards/QH.png"))))])
             ;(new message% [parent canvas]
                           ;[label cards]))
-            (list canvas (new button%
+
+            (cons canvas
+                  (cons (new button%
                                 [parent horizontal]
                                 [label "Hit"]
                                 [callback hit_event]
                                 [stretchable-height #t])
-                          (new button%
+                        (cons (new button%
                                 [parent horizontal]
                                 [label "Stay"]
+                                [callback stay_event]
                                 [stretchable-height #t])
-                          (new message%
+                              (cons (new message%
                                 [parent horizontal]
                                 [label name]
-                                [auto-resize #t]))))))
+                                [auto-resize #t])
+                                    (list)))))))))
+
 
 (define (draw_player_cards card panel)
   (new message% [parent panel]
-                [label (pict->bitmap (scale (bitmap (read-bitmap (string-append "./resources/cards/" card ".png"))) 0.3))]))
+                [label (pict->bitmap (scale (bitmap (read-bitmap (string-append (path->string (find-system-path 'orig-dir)) "src/resources/cards/" card ".png"))) 0.3))]))
 
 
 
 ; Show the frame
 (send frame_main show #t)
+
 
 
 
@@ -235,3 +272,11 @@
     (send punctuarion_table show #t)
   )
 )
+
+(define (terminator)
+  (begin
+    (for-each (lambda (child) (send canvas_dealer_cards delete-child child)) (send canvas_dealer_cards get-children))
+    (set! players (check_dealer players deck))
+    (draw_dealer_cards (get_hand (car players)))
+
+    ))

@@ -6,11 +6,11 @@
 ; lista players de ejemplo para debugging
 (define (get_players_example)
   '(
-      ("dealer" "stay" (("four_clubs" 4 0 0 #f)) ())
-      ("fabian" "stay" (("five_clubs" 5 0 0 #f) ("six_clubs" 6 0 0 #f) ("seven_clubs" 7 0 0 #f)) ())
-      ("alejandro" "stay" (("four_clubs" 4 0 0 #f) ("five_clubs" 5 0 0 #f) ("six_clubs" 6 0 0 #f) ("seven_clubs" 7 0 0 #f)) ())
-      ("vanessa" "stay" (("four_clubs" 4 0 0 #f) ("five_clubs" 5 0 0 #f) ("six_clubs" 6 0 0 #f) ("seven_clubs" 7 0 0 #f)) ())
-      ("hazel" "stay" (("four_clubs" 4 0 0 #f) ("five_clubs" 5 0 0 #f) ("six_clubs" 6 0 0 #f) ("seven_clubs" 7 0 0 #f)) ())
+      ("dealer" "stay" (("five_clubs" 5 0 0 #t) ("ace_clubs" 1 0 0 #f)) ())
+      ("fabian" "stay" (("five_clubs" 5 0 0 #t) ("six_clubs" 6 0 0 #t) ("seven_clubs" 7 0 0 #t)) ())
+      ("alejandro" "stay" (("king_clubs" 10 0 0 #t) ("ace_clubs" 1 0 0 #f)) ())
+      ("vanessa" "stay" (("four_clubs" 4 0 0 #t) ("five_clubs" 5 0 0 #t) ("six_clubs" 6 0 0 #t) ("seven_clubs" 7 0 0 #t)) ())
+      ("hazel" "stay" (("four_clubs" 4 0 0 #t) ("five_clubs" 5 0 0 #t) ("six_clubs" 6 0 0 #t) ("seven_clubs" 7 0 0 #t)) ())
    )
 )
 
@@ -226,23 +226,16 @@
 
 
 ; Despues de hacer un deal, se ejecuta esta función para
-; ver si alguien obtuvo un bust.
+; ver si el jugador en turno obtuvo un bust.
 ;
 ; Parámetros:
-;   players: Lista de jugadores
+;   player: Lista de propiedades de un jugador.
 ;
 ; Retorna:
 ;   verdadero si alguien tiene un bust o falso si no
 ;
-(define (bust? players)
-  (cond
-    ((empty? players) #f)
-    ((> (hand_total (get_hand (car players))) 21)
-      (change_status (get_name (car players)) "bust" players))
-    (else
-      (bust? (cdr players))
-    )
-  )
+(define (bust? player)
+  (> (hand_total (get_hand player)) 21)
 )
 
 
@@ -298,23 +291,17 @@
 )
 
 
-; Revisa si algún jugador de la lista ha obtenido un blackjack
+; Despues de hacer un deal, se ejecuta esta función para
+; ver si el jugador en turno obtuvo un bust.
 ;
 ; Parámetros:
-;   players: lista de jugadores
+;   players: lista de propiedades de un jugador
 ;
 ; Retorna:
 ;   Verdadero si alguien lo obtuvo o falso si nadie lo consigue.
 ;
-(define (blackjack? players)
-  (cond ((empty? players)
-          #f)
-        ((equal? (caar players) "dealer")
-          (blackjack? (cdr players)))
-        ((= (hand_total (caddar players)) 21)
-          #t)
-        (else
-          (blackjack? (cdr players)))))
+(define (blackjack? player)
+  (equal? (hand_total (get_hand player)) 21))
 
 
 ; Genera una lista del total de puntos de cada jugador
@@ -442,7 +429,7 @@
 (define (check_dealer players deck)
   (cond
     ((> (hand_total (get_hand (get_dealer players))) 16  )
-      (endgame (change_status "dealer" "stay" players))
+      players
     )
     (else
       (check_dealer (deal "dealer" players deck) deck)
@@ -463,7 +450,7 @@
 (define (menores pivote lista)
 	(cond
 	  ((null? lista) lista)
-          ((<= pivote (car (cdr (car lista)))) (cons (car lista) (menores pivote (cdr lista))))
+          ((>= pivote (car (cdr (car lista)))) (cons (car lista) (menores pivote (cdr lista))))
           (else
 	    (menores pivote (cdr lista))
 	  )
@@ -483,7 +470,7 @@
 (define (mayores pivote lista)
 	(cond
 	  ((null? lista) lista)
-          ((> pivote (car (cdr (car lista)))) (cons (car lista) (mayores pivote (cdr lista))))
+          ((< pivote (car (cdr (car lista)))) (cons (car lista) (mayores pivote (cdr lista))))
           (else
 	    (mayores pivote (cdr lista))
 	  )
@@ -505,9 +492,9 @@
 	  ((null? lista) lista)
     (else
       (append
-        (qsort (menores (car (cdr (car lista))) (cdr lista)))
+        (reverse_qsort (mayores (car (cdr (car lista))) (cdr lista)))
         (list (car lista))
-        (qsort (mayores (car (cdr (car lista))) (cdr lista)))
+        (reverse_qsort (menores (car (cdr (car lista))) (cdr lista)))
       )
     )
   )
@@ -528,9 +515,9 @@
 	  ((null? lista) lista)
     (else
       (append
-        (qsort (mayores (car (cdr (car lista))) (cdr lista)))
-        (list (car lista))
         (qsort (menores (car (cdr (car lista))) (cdr lista)))
+        (list (car lista))
+        (qsort (mayores (car (cdr (car lista))) (cdr lista)))
       )
     )
   )
@@ -594,7 +581,7 @@
     ((empty? lista) lista)
     (else
       (append
-        (cdr (car lista))
+        (list (cadr (car lista)))
         (segundos (cdr lista))
       )
     )
@@ -614,7 +601,16 @@
 ;
 (define (blackjack_sort lista)
   (append
-    (reverse_qsort (mayores 21 lista))
-    (qsort (menores 21 lista))
+    (reverse_qsort (menores 21 lista))
+    (qsort (mayores 21 lista))
   )
 )
+
+;(define (natural_blackjack_check players table)
+;  (cond ((empty? players)
+;          table)
+;        (else
+;          (natural_blackjack_check (cdr players) (append table (list (list (caar players) (hand_total (get_hand (car players))) (and (or
+;                                                                             (string-contains? (caar (get_hand (car players))) "ace")
+;                                                                             (string-contains? (caadr (get_hand (car players))) "ace"))
+;                                                                           (equal? (hand_total (get_hand (car players))) 21)))))))))
