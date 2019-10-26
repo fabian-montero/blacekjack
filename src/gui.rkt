@@ -6,18 +6,45 @@
 (provide (all-defined-out))
 
 
+; Descripción: Lista de jugadores
+;
 (define players '())
 
+
+; Descripción: Lista de cartas mezcladas y a utilizar
+;
 (define deck '())
 
-(define (get_gui_elements player)
-  (cadddr player))
 
+; Busca el booleano que indica
+; si la carta está vuelta hacia arriba o hacia abajo.
+;
+; Parámetros:
+;   card: Lista con las propiedades de la carta.
+;
+; Retorna:
+;   Verdadero si la carta está volteada hacia arriba o falso en el contrario.
+;
 (define (faced_up? card)
   (cadr (cdddr card)))
 
+
+; Descripción: Ventana de prueba para obtener el tamaño de la pantalla.
+;
 (define testing_frame (new frame% [label "test"]))
 
+
+; Valores de anchura (W) y altura (H) de la pantalla
+; obtenidos según el sistema operativo, para windows (HWND)
+; el valor se obtiene usando testing_frame, para linux se establece
+; una resolución de 1920x1080.
+;
+; Parámetros:
+;   N/A
+;
+; Retorna:
+;   N/A
+;
 (define-values [W H]
   (let ([f testing_frame]
         [tipo (cpointer-tag (send testing_frame get-handle))])
@@ -38,6 +65,7 @@
                         [stretchable-width #f]
                         [stretchable-height #f]))
 
+
 ; Descripción: Panel con el canvas del dealer y el deck.
 ;
 (define pane_dealer (new horizontal-pane%
@@ -49,6 +77,7 @@
                          [spacing 40]
                          ))
 
+
 ; Descripción: Panel con los canvas de los juegadores.
 ;
 (define pane_players (new horizontal-panel%
@@ -57,7 +86,7 @@
                          [alignment '(center center)]
                          [border 40]
                          [spacing 100]
-               
+
                          ))
 
 
@@ -72,9 +101,6 @@
                                  ))
 
 
-
-
-
 ; Descripción: canvas para las cartas del deck.
 ;
 (define canvas_deck (new horizontal-panel%
@@ -85,11 +111,27 @@
                                  ))
 
 
+; Dibuja la carta que representa el maso de cartas (deck) o pozo
+;
+; Parámetros:
+;   N/A
+;
+; Retorna:
+;   Objeto de tipo messsage%
+;
 (define (draw_deck)
   (new message% [parent canvas_deck]
                 [label (pict->bitmap (scale (bitmap (read-bitmap (string-append "./resources/cards/reverse.png"))) 0.2))]))
 
 
+; Dibuja las cartas del dealer (crupier) y muestra una de las cartas boca abajo.
+;
+; Parámetros:
+;   hand: Lista de cartas del dealer.
+;
+; Retorna:
+;   Lista de cartas con el objeto message% de la carta agregado al final de cada carta.
+;
 (define (draw_dealer_cards hand)
   (cond ((empty? hand)
           (list))
@@ -99,11 +141,29 @@
                 (draw_dealer_cards (cdr hand))))))
 
 
+; Dibuja la carta del jugador en su panel específico.
+;
+; Parámetros:
+;   card: Nombre de la carta a dibujar
+;   panel: Panel donde se dibujará la carta.
+;
+; Retorna:
+;   Objeto message% con el dibujo de la carta.
+;
 (define (draw_player_cards card panel)
   (new message% [parent panel]
                 [label (pict->bitmap (scale (bitmap (read-bitmap (string-append "./resources/cards/" card ".png"))) 0.2))]))
 
 
+; Responde al presionar el botón de hit de un jugador
+;
+; Parámetros:
+;   button: Objeto button% del jugador.
+;   event: Nombre del evento del presionado del botón.
+;
+; Retorna:
+;   N/A
+;
 (define (hit_event button event)
   (let* ([name (send (caddr (send (send button get-parent) get-children)) get-label)]
         [new_players (deal name players deck)]
@@ -136,6 +196,16 @@
               (terminator)
               )))))
 
+
+; Responde al presionar el botón de stay de un jugador
+;
+; Parámetros:
+;   button: Objeto button% del jugador.
+;   event: Nombre del evento del presionado del botón.
+;
+; Retorna:
+;   N/A
+;
 (define (stay_event button event)
   (let* ([name (send (caddr (send (send button get-parent) get-children)) get-label)]
         [hit_button (car (send (send button get-parent) get-children))]
@@ -146,9 +216,9 @@
       (send hit_button enable #f)
       (send message_name set-label (string-append name " (stayed)"))
       (cond ((all_players_stayed? players)
-             
-             (terminator)))
+      (terminator)))
       )))
+
 
 ; Construye los canvas y páneles necesarios para los jugadores,
 ; luego los añade al pane_players, además añade a list_players
@@ -260,15 +330,32 @@
   )
 )
 
+; Finaliza el juego mostrando la carta oculta del dealer y lanzando la pantalla
+; de jugadores.
+;
+; Parámetros:
+;   N/A
+;
+; Retorna:
+;   N/A
+;
 (define (terminator)
   (begin
     (for-each (lambda (child) (send canvas_dealer_cards delete-child child)) (send canvas_dealer_cards get-children))
     (set! players (check_dealer players deck))
-    
+
     (draw_dealer_cards (cons (flip_card (car (get_hand (car players))) #t) (cdr (get_hand (car players)))))
     (gen_tabla players)
     ))
 
+; Inicializa las variables globales y hace la parimera repartición de cartas.
+;
+; Parámetros:
+;   X: Lista de jugadores.
+;
+; Retorna:
+;   N/A
+;
 (define (bCEj X)
   (let* ([names (append (list "dealer") X)]
         [init_players (deal_init names '())]
